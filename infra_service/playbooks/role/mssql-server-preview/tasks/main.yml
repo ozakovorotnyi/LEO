@@ -1,0 +1,13 @@
+# Install MSSQL-Server Preview 2019
+---
+
+- name: Copy repository
+  copy:
+    src: mssql-server-preview.repo
+    dest: /etc/yum.repos.d/mssql-server-preview.repo
+    owner: root
+    group: root
+    mode: '0644'
+  tags:
+    - mssql-server-preview.init
+    - mssql-server-preview.repos

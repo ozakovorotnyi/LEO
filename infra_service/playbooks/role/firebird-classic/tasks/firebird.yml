@@ -1,0 +1,32 @@
+# Install FireBird from source
+
+---
+
+- name: Download archive file
+  get_url:
+    url: "{{ firebird_url }}"
+    dest: "{{ firebird_dest_folder }}"
+  tags:
+    - firebird-classic.install.src
+    - firebird-classic.download
+
+- name: Unarchive source code
+  unarchive:
+    src: "{{ firebird_dest_folder }}/{{ firebird_file_name }}"
+    dest: "{{ firebird_dest_folder }}"
+    copy: no
+  tags:
+    - firebird-classic.install.src
+    - firebird-classic.unarchive
+
+- name: Create folder where locate DB
+  file:
+    path: "{{ firebird_db_dir }}"
+    owner: "{{ firebird_user }}"
+    group: "{{ firebird_group }}"
+    state: directory
+  tags:
+    - firebird-classic.install.src
+    - firebird-classic.install.directory
+
+- name:

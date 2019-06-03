@@ -1,0 +1,6 @@
+firebird_url: "https://github.com/FirebirdSQL/firebird/releases/download/R2_5_8/FirebirdCS-2.5.8.27089-0.amd64.tar.gz"
+firebird_file_name: "FirebirdCS-2.5.8.27089-0.amd64.tar.gz"
+firebird_dest_folder: "/opt"
+firebird_db_dir: "/FB_Databases"
+firebird_user: firebird
+firebird_groups: firebird
