@@ -1,0 +1,11 @@
+###############################################################################
+#
+# Global Infrastructure Support Host Groups
+#
+###############################################################################
+
+- name: Setup MSSQL Database servive
+  hosts: mssql-server-group
+  become: true
+  roles:
+  - { role: mssql-server-preview, tags: [ 'mssql-server-preview' ] }
