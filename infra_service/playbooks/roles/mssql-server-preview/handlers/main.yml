@@ -1,0 +1,7 @@
+---
+
+- name: start mssql-server
+  service:
+    name: mssql-server
+    state: started
+    enabled: yes

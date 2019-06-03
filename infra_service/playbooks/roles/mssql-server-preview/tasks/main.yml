@@ -1,12 +1,85 @@
 ---
 
+- debug:
+    msg: "Check to see if EULA variables are accepted"
+  failed_when: (end_user_license_aggreement_consent_server != "Y" ) or (end_user_license_aggreement_consent_cli != "YES")
+
 - name: Copy repository MSSQL Preview
   copy:
-    src: mssql-server-preview.repo
-    dest: /etc/yum.repos.d/mssql-server-preview.repo
+    src: "{{ item }}"
+    dest: "/etc/yum.repos.d/{{ item }}"
     owner: root
     group: root
     mode: 0644
+  with_items:
+    - mssql-prod.repo
+    - mssql-server-preview.repo
   tags:
     - mssql-server-preview.init
     - mssql-server-preview.repos
+
+- name: Install MSSQL preview
+  yum:
+    enablerepo: mssql-server-preview
+    update_cache: yes
+    name:
+      - mssql-server
+    state: present
+  notify:
+    - start mssql-server
+  tags:
+    - mssql-server-preview.init
+    - mssql-server-preview.install
+    - mssql-server-preview.install.server
+
+#- name: Setup MSSQL-Server
+#  mssql_conf:
+#    setup_sa_password: "{{ sa_password }}"
+#    setup_pid: "{{ pid }}"
+#    login_name: 'sa'
+#    login_password: "{{ sa_password }}"
+
+- name: Push MSSQL-Server config
+  template:
+    src: "{{ item }}"
+    dest: '{{ mssql_preview_config_dir }}/{{ item | basename | replace(".j2", "") }}'
+    owner: "{{ mssql_preview_user_owner }}"
+    group: "{{ mssql_preview_group_owner }}"
+  with_fileglob:
+    - mssql-config/mssql.conf.j2
+
+- name: Remove older unixODBC files if performing upgrade
+  yum:
+    name:
+      - unixODBC-utf16
+      - unixODBC-utf16-devel
+    state: absent
+  tags:
+  - mssql-server-preview.init
+  - mssql-server-preview.remove.odbc
+
+- name: Install MSSQL-TOOLS
+  yum:
+    enablerepo: mssql-prod
+    name:
+      - mssql-tools
+      - msodbcsql17
+    state: present
+  environment:
+    ACCEPT_EULA: 'Y'
+  tags:
+    - mssql-server-preview.init
+    - mssql-server-preview.install
+    - mssql-server-preview.install.mstools
+
+#- name: Install ODBC Driver V.17 for MSSQL
+#  yum:
+#    enablerepo: mssql-prod
+#    name: msodbcsql17
+#    state: latest
+#  environment:
+#    ACCEPT_EULA: 'Y'
+#  tags:
+#  - mssql-server-preview.init
+#  - mssql-server-preview.install
+#  - mssql-server-preview.install.odbc
