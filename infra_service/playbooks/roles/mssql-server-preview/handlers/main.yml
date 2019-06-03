@@ -1,13 +1,13 @@
 ---
 
-- name: start mssql-server
-  service:
-    name: mssql-server
-    state: started
-    enabled: yes
-
 - name: restart firewalld
   service:
     name: firewalld
+    state: restarted
+  when: firewalld_rule_added.changed
+
+- name: restart mssql-server
+  service:
+    name: mssql-server
     state: restarted
     enabled: yes

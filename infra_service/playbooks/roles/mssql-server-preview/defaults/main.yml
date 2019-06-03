@@ -1,33 +1,37 @@
 ---
 
 # Accept EULA License
+mssql_preview_choose_edition: Express
+
 end_user_license_aggreement_consent_server: "Y"
 end_user_license_aggreement_consent_cli: "YES"
-
-mssql_preview_choose_edition: Express
 
 # For use when creating, importing, or deleting databases
 mssql_preview_db_name: TEST
 mssql_preview_db_host: 127.0.0.1
 mssql_preview_db_port: 1433
 mssql_preview_db_user: SA
-mssql_preview_db_password: P@ssWORD!
+mssql_preview_db_password: "Qwerty11"
+
+mssql_preview_network_rpcport: 13500
+mssql_preview_fw_network_rpcport: 135
+mssql_preview_distributedtransaction_servertcpport: 51999
 
 mssql_preview_import_file: /Users/kylebenson/Documents/Work/Vagrant/centos/Load_DB.sql
 mssql_preview_import_file_dest: /tmp/Load_DB.sql
 
 # Config MSSQL-Server
-mssql_preview_tcp_port: "1433/tcp"
 mssql_preview_user_owner: mssql
 mssql_preview_group_owner: mssql
 mssql_preview_config_dir: "/var/opt/mssql"
 mssql_preview_sa_password: "Qwerty11"
 
-
 #System Config options
 mssql_preview_enable_firewalld: true
-mssql_preview_install_cli: false
-
+mssql_preview_enable_sqlcheck: false
+mssql_preview_enable_network_rpcport: true
+mssql_preview_enable_distributedtransaction_servertcpport: true
 
 # URL
 # ODBC17 - https://docs.microsoft.com/en-us/sql/connect/odbc/linux-mac/installing-the-microsoft-odbc-driver-for-sql-server?view=sql-server-2017
+# MSDTC - https://docs.microsoft.com/en-us/sql/linux/sql-server-linux-configure-msdtc?view=sqlallproducts-allversions

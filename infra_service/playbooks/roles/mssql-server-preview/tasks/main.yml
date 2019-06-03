@@ -18,7 +18,7 @@
     - mssql-server-preview.init
     - mssql-server-preview.repos
 
-- name: Install MSSQL preview
+- name: Install MSSQL Server preview
   yum:
     enablerepo: mssql-server-preview
     update_cache: yes
@@ -27,20 +27,11 @@
     state: present
   register: mssql_package_setup
   notify:
-    - start mssql-server
+    - restart mssql-server
   tags:
     - mssql-server-preview.init
     - mssql-server-preview.install
     - mssql-server-preview.install.server
-
-#- name: Push MSSQL-Server config
-#  template:
-#    src: "{{ item }}"
-#    dest: '{{ mssql_preview_config_dir }}/{{ item | basename | replace(".j2", "") }}'
-#    owner: "{{ mssql_preview_user_owner }}"
-#    group: "{{ mssql_preview_group_owner }}"
-# with_fileglob:
-#    - mssql-config/mssql.conf.j2
 
 - name: Remove older unixODBC files if performing upgrade
   yum:
@@ -79,7 +70,7 @@
     - mssql-server-preview.init
     - mssql-server-preview.set.env
 
-- name: Enable Firewalld service
+- name: Enable firewalld service
   service:
     name: firewalld
     state: started
@@ -89,17 +80,19 @@
     - mssql-server-preview.init
     - mssql-server-preview.enable.firewalld
 
-- name: Add Firewalld settings
+- name: Add firewalld settings
   firewalld:
     zone: public
-    port: "{{ mssql_preview_tcp_port }}"
+    port: "{{ mssql_preview_db_port }}/tcp"
     permanent: yes
     state: enabled
   when: mssql_preview_enable_firewalld
+  register: firewalld_rule_added
   notify: restart firewalld
   tags:
     - mssql-server-preview.init
-    - mssql-server-preview.firewalld
+    - mssql-server-preview.firewalld.setup
+    - mssql-server-preview.firewalld.mssql
 
 - name: Run MSSQL Setup script
   shell:  MSSQL_PID="{{ mssql_preview_choose_edition }}" \
@@ -110,4 +103,85 @@
   when: mssql_package_setup.changed
   tags:
     - mssql-server-preview.init
-    - mssql-server-preview.setup
+    - mssql-server-preview.setup.mssql
+
+- name: Check if MSSQL Server is alive
+  shell: 'sqlcmd -S "{{ mssql_preview_db_host }}" -U "{{ mssql_preview_db_user }}" -P "{{ mssql_preview_db_password }}" -Q "select 1"'
+  register: mssql_server_is_alive
+  environment:
+    PATH: "{{ ansible_env.PATH }}:/opt/mssql-tools/bin/"
+  failed_when: "'1 rows affected' not in mssql_server_is_alive.stdout"
+  when: mssql_preview_enable_sqlcheck
+
+##############################################
+###  Part of Configure RPC and MSDTC ports ###
+##############################################
+
+- name: Configure Network RPC port
+  shell: '/opt/mssql/bin/mssql-conf set network.rpcport "{{ mssql_preview_network_rpcport }}"'
+  register: network_rpcport
+  when: mssql_preview_enable_network_rpcport
+  notify: restart mssql-server
+  tags:
+    - mssql-server-preview.init
+    - mssql-server-preview.setup.rpc
+
+- name: Configure MSDTC port
+  shell: '/opt/mssql/bin/mssql-conf set distributedtransaction.servertcpport "{{ mssql_preview_distributedtransaction_servertcpport }}"'
+  register: distributedtransaction_servertcpport
+  when: mssql_preview_enable_distributedtransaction_servertcpport
+  notify: restart mssql-server
+  tags:
+  - mssql-server-preview.init
+  - mssql-server-preview.setup.msdtc
+
+- name: Add firewalld rule for Network RPC port
+  firewalld:
+    zone: public
+    port: "{{ mssql_preview_fw_network_rpcport }}/tcp"
+    permanent: yes
+    state: enabled
+  when: mssql_preview_enable_network_rpcport and network_rpcport.changed
+  register: firewalld_rule_added
+  notify: restart firewalld
+  tags:
+    - mssql-server-preview.init
+    - mssql-server-preview.firewalld.setup
+    - mssql-server-preview.firewalld.rpc
+
+- name: Add firewalld rule for MSDTC port
+  firewalld:
+    zone: public
+    port: "{{ mssql_preview_distributedtransaction_servertcpport }}/tcp"
+    permanent: yes
+    state: enabled
+  when: mssql_preview_enable_distributedtransaction_servertcpport and distributedtransaction_servertcpport.changed
+  register: firewalld_rule_added
+  notify: restart firewalld
+  tags:
+    - mssql-server-preview.init
+    - mssql-server-preview.firewalld.setup
+    - mssql-server-preview.firewalld.msdtc
+
+- name: Forward RPC port 135 to 13500
+  firewalld:
+    zone: public
+    rich_rule: 'rule family=ipv4 forward-port port="{{ mssql_preview_fw_network_rpcport }}" protocol=tcp to-port="{{ mssql_preview_network_rpcport }}"'
+    permanent: yes
+    immediate: yes
+    state: enabled
+  register: firewalld_rule_added
+  notify: restart firewalld
+  tags:
+    - mssql-server-preview.init
+    - mssql-server-preview.firewalld.setup
+    - mssql-server-preview.firewalld.rpc.forward
+
+#- name: Push MSSQL-Server config
+#  template:
+#    src: "{{ item }}"
+#    dest: '{{ mssql_preview_config_dir }}/{{ item | basename | replace(".j2", "") }}'
+#    owner: "{{ mssql_preview_user_owner }}"
+#    group: "{{ mssql_preview_group_owner }}"
+# with_fileglob:
+#    - mssql-config/mssql.conf.j2
