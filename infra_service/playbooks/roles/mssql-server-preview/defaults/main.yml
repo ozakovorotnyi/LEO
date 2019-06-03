@@ -24,6 +24,7 @@ mssql_preview_import_file_dest: /tmp/Load_DB.sql
 mssql_preview_user_owner: mssql
 mssql_preview_group_owner: mssql
 mssql_preview_config_dir: "/var/opt/mssql"
+mssql_preview_config_file: "mssql.conf"
 mssql_preview_sa_password: "Qwerty11"
 
 #System Config options

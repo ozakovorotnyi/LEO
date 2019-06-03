@@ -116,11 +116,32 @@
 ##############################################
 ###  Part of Configure RPC and MSDTC ports ###
 ##############################################
+- name: Check if Network RPC port already configure
+  lineinfile:
+    name: "{{ mssql_preview_config_dir }}/{{ mssql_preview_config_file }}"
+    line: "rpcport = 13500"
+    state: present
+  check_mode: yes
+  register: rpcport_enabled
+  tags:
+    - mssql-server-preview.init
+    - mssql-server-preview.check.rpc
+
+- name: Check if Network MSDTC port already configure
+  lineinfile:
+    name: "{{ mssql_preview_config_dir }}/{{ mssql_preview_config_file }}"
+    line: "servertcpport = 51999"
+    state: present
+  check_mode: yes
+  register: servertcpport_enabled
+  tags:
+  - mssql-server-preview.init
+  - mssql-server-preview.servertcpport.rpc
 
 - name: Configure Network RPC port
   shell: '/opt/mssql/bin/mssql-conf set network.rpcport "{{ mssql_preview_network_rpcport }}"'
   register: network_rpcport
-  when: mssql_preview_enable_network_rpcport
+  when: mssql_preview_enable_network_rpcport and rpcport_enabled.changed
   notify: restart mssql-server
   tags:
     - mssql-server-preview.init
@@ -129,7 +150,7 @@
 - name: Configure MSDTC port
   shell: '/opt/mssql/bin/mssql-conf set distributedtransaction.servertcpport "{{ mssql_preview_distributedtransaction_servertcpport }}"'
   register: distributedtransaction_servertcpport
-  when: mssql_preview_enable_distributedtransaction_servertcpport
+  when: mssql_preview_enable_distributedtransaction_servertcpport and servertcpport_enabled.changed
   notify: restart mssql-server
   tags:
   - mssql-server-preview.init
