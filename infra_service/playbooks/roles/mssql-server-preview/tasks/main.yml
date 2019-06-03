@@ -25,6 +25,7 @@
     name:
       - mssql-server
     state: present
+  register: mssql_package_setup
   notify:
     - start mssql-server
   tags:
@@ -32,21 +33,14 @@
     - mssql-server-preview.install
     - mssql-server-preview.install.server
 
-#- name: Setup MSSQL-Server
-#  mssql_conf:
-#    setup_sa_password: "{{ sa_password }}"
-#    setup_pid: "{{ pid }}"
-#    login_name: 'sa'
-#    login_password: "{{ sa_password }}"
-
-- name: Push MSSQL-Server config
-  template:
-    src: "{{ item }}"
-    dest: '{{ mssql_preview_config_dir }}/{{ item | basename | replace(".j2", "") }}'
-    owner: "{{ mssql_preview_user_owner }}"
-    group: "{{ mssql_preview_group_owner }}"
-  with_fileglob:
-    - mssql-config/mssql.conf.j2
+#- name: Push MSSQL-Server config
+#  template:
+#    src: "{{ item }}"
+#    dest: '{{ mssql_preview_config_dir }}/{{ item | basename | replace(".j2", "") }}'
+#    owner: "{{ mssql_preview_user_owner }}"
+#    group: "{{ mssql_preview_group_owner }}"
+# with_fileglob:
+#    - mssql-config/mssql.conf.j2
 
 - name: Remove older unixODBC files if performing upgrade
   yum:
@@ -58,12 +52,16 @@
   - mssql-server-preview.init
   - mssql-server-preview.remove.odbc
 
-- name: Install MSSQL-TOOLS
+- name: Install MSSQL-TOOLS and ODBC Drivers
   yum:
     enablerepo: mssql-prod
     name:
       - mssql-tools
       - msodbcsql17
+      - unixODBC-devel
+      - python-pip
+      - python-devel
+      - python2-pymssql
     state: present
   environment:
     ACCEPT_EULA: 'Y'
@@ -72,14 +70,43 @@
     - mssql-server-preview.install
     - mssql-server-preview.install.mstools
 
-#- name: Install ODBC Driver V.17 for MSSQL
-#  yum:
-#    enablerepo: mssql-prod
-#    name: msodbcsql17
-#    state: latest
-#  environment:
-#    ACCEPT_EULA: 'Y'
-#  tags:
-#  - mssql-server-preview.init
-#  - mssql-server-preview.install
-#  - mssql-server-preview.install.odbc
+- name: Add MSSQL-Tools to .bashrc
+  lineinfile:
+    dest: "{{ ansible_user_dir }}/.bashrc"
+    state: present
+    line: 'export PATH="$PATH:/opt/mssql-tools/bin"'
+  tags:
+    - mssql-server-preview.init
+    - mssql-server-preview.set.env
+
+- name: Enable Firewalld service
+  service:
+    name: firewalld
+    state: started
+    enabled: yes
+  tags:
+    - mssql-server-preview.init
+    - mssql-server-preview.enable.firewalld
+
+- name: Add Firewalld settings
+  firewalld:
+    zone: public
+    port: "{{ mssql_preview_tcp_port }}"
+    permanent: yes
+    state: enabled
+  when: mssql_preview_enable_firewalld
+  notify: restart firewalld
+  tags:
+    - mssql-server-preview.init
+    - mssql-server-preview.firewalld
+
+- name: Run MSSQL Setup script
+  shell:  MSSQL_PID="{{ mssql_preview_choose_edition }}" \
+          MSSQL_SA_PASSWORD="{{ mssql_preview_sa_password }}" \
+          /opt/mssql/bin/mssql-conf -n setup accept-eula
+  register: mssql_setup_output
+  failed_when: "'Setup has completed successfully. SQL Server is now starting.' not in mssql_setup_output.stdout"
+  when: mssql_package_setup.changed
+  tags:
+    - mssql-server-preview.init
+    - mssql-server-preview.setup
