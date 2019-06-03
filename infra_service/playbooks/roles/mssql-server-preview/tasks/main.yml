@@ -84,6 +84,7 @@
     name: firewalld
     state: started
     enabled: yes
+  when: mssql_preview_enable_firewalld
   tags:
     - mssql-server-preview.init
     - mssql-server-preview.enable.firewalld
