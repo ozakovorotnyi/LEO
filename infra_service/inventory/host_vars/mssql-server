@@ -1,4 +1,4 @@
 [mssql-server-group]
-192.168.1.148 ansible_user=root
-
+192.168.1.148
+192.168.1.84
 

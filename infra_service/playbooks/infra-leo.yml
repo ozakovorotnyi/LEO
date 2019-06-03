@@ -4,7 +4,7 @@
 #
 ###############################################################################
 
-- name: Setup MSSQL Database servive
+- name: Setup MSSQL Database service
   hosts: mssql-server-group
   become: true
   roles:

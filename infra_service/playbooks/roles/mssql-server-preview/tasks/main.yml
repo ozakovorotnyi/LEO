@@ -2,11 +2,13 @@
 
 - name: Copy repository
   copy:
-    src: "files/mssql-server-preview.repo"
-    dest: "/etc/yum.repos.d/mssql-server-preview.repo"
+    src: "{{ item }}"
+    dest: "/etc/yum.repos.d/{{ item }}"
     owner: root
     group: root
-    mode: '0644'
+    mode: 0644
+  with_fileglob:
+    - files/mssql-server-preview.repo
   tags:
-      - mssql-server-preview.init
-      - mssql-server-preview.repos
+    - mssql-server-preview.init
+    - mssql-server-preview.repos
