@@ -56,7 +56,7 @@ openvpn_server_script_group: root
 openvpn_server_systemctl_ipv4_forvarding_enabled: true
 
 ### Define people who should have access to VPN ###
-openvpn_server_clients: ['zaka', 'ale', 'maks']
+openvpn_server_clients: ['zaka', 'ale']
 
 ### Define people if you want revoke crt and delete key, config ###
-openvpn_revoke_these_certs: ['maks', 'ale']
+openvpn_revoke_these_certs: []
