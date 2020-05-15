@@ -382,7 +382,7 @@
 - name: Generate client config
   template:
     src: client.ovpn.j2
-    dest: "{{ openvpn_server_base_dir }}/{{ item.0.item }}-{{ openvpn_server_hostname }}.ovpn"
+    dest: "{{ openvpn_server_base_dir }}/client/{{ item.0.item }}-{{ openvpn_server_hostname }}.ovpn"
     owner: "{{ openvpn_server_script_owner }}"
     group: "{{ openvpn_server_script_group }}"
     mode: 0400
