@@ -73,8 +73,8 @@
   copy:
     src: "{{ item }}"
     dest: "{{ openvpn_server_key_dir }}"
-    owner: root
-    group: root
+    owner: "{{ openvpn_server_script_owner }}"
+    group: "{{ openvpn_server_script_group }}"
     mode: 0400
   with_items:
     - openssl-ca.ext
@@ -198,8 +198,8 @@
   template:
     src: ca.conf.j2
     dest: "{{ openvpn_server_key_dir }}/ca.conf"
-    owner: root
-    group: root
+    owner: "{{ openvpn_server_script_owner }}"
+    group: "{{ openvpn_server_script_group }}"
     mode: 744
   tags:
     - openvpn
@@ -221,8 +221,8 @@
   template:
     src: revoke.sh.j2
     dest: "{{ openvpn_server_key_dir }}/revoke.sh"
-    owner: root
-    group: root
+    owner: "{{ openvpn_server_script_owner }}"
+    group: "{{ openvpn_server_script_group }}"
     mode: 744
   tags:
     - openvpn
@@ -264,8 +264,8 @@
   template:
     src: crl-cron.sh.j2
     dest: "{{ openvpn_server_key_dir }}/crl-cron.sh"
-    owner: root
-    group: root
+    owner: "{{ openvpn_server_script_owner }}"
+    group: "{{ openvpn_server_script_group }}"
     mode: 744
   tags:
     - openvpn
@@ -286,8 +286,8 @@
   template:
     src: server.conf.j2
     dest: "{{ openvpn_server_base_dir }}/{{ openvpn_server_config_file }}.conf"
-    owner: root
-    group: root
+    owner: "{{ openvpn_server_script_owner }}"
+    group: "{{ openvpn_server_script_group }}"
   notify:
     - restart openvpn
   tags:
@@ -302,8 +302,8 @@
   copy:
     src: openssl-client.ext
     dest: "{{ openvpn_server_key_dir }}"
-    owner: root
-    group: root
+    owner: "{{ openvpn_server_script_owner }}"
+    group: "{{ openvpn_server_script_group }}"
     mode: 0400
   tags:
     - openvpn
@@ -383,8 +383,8 @@
   template:
     src: client.ovpn.j2
     dest: "{{ openvpn_server_base_dir }}/{{ item.0.item }}-{{ openvpn_server_hostname }}.ovpn"
-    owner: root
-    group: root
+    owner: "{{ openvpn_server_script_owner }}"
+    group: "{{ openvpn_server_script_group }}"
     mode: 0400
   with_together:
     - "{{ openvpn_server_client_certs.results }}"
