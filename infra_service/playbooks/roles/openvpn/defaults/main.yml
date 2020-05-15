@@ -43,7 +43,7 @@ openvpn_server_management_client_user: root
 openvpn_server_rsa_bits: 2048
 openvpn_server_key_days: 3650
 
-openvpn_server_ca_key: {}
+openvpn_server_ca_key.key: {}
 
 openvpn_server_systemctl_ipv4_forvarding_enabled: true
 
