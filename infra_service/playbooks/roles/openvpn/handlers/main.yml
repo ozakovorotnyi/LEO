@@ -10,13 +10,15 @@
   service:
     name: iptables
     state: restarted
+    enabled: yes
 
-- name: restart firewalld
+- name: stop firewalld
   service:
     name: firewalld
-    state: restarted
+    state: stopped
+    enabled: no
 
-- name: save iptables rules (Debian/Ubuntu and CentOS/RHEL/Fedora)
+- name: save iptables rules
   shell: "{{ iptables_save_command }}"
-  when: ansible_os_family == 'Debian' or ansible_os_family == 'RedHat'
-  listen: "save iptables"
+  when: ansible_os_family == 'RedHat'
+  listen: "save firewall"

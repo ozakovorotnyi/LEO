@@ -22,6 +22,86 @@
     - openvpn.server
     - openvpn.server.enable_ipv4.forwarding
 
+#################################### Firewall settings ####################################
+- name: Install iptables-services
+  yum:
+    name: iptables-services
+    state: present
+  register: iptables_installed
+  when: ansible_os_family == "RedHat"
+  notify: stop firewalld
+  tags:
+    - openvpn
+    - openvpn.server
+    - openvpn.server.install
+    - openvpn.server.install.firewall
+
+- name: Firewall - Allow VPN forwarding
+  iptables:
+    chain: FORWARD
+    source: "{{ openvpn_server_network }}/ {{ openvpn_server_netmask_cidr }}"
+    jump: ACCEPT
+    action: insert
+    comment: "Allow VPN forwarding"
+  notify: "save firewall"
+
+- name: Firewall - Allow incoming SSH connection
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: "{{ ansible_port | default(22) }}"
+    jump: ACCEPT
+    action: insert
+    comment: "Allow incoming SSH connection"
+  notify: "save firewall"
+
+- name: Firewall - Allow incoming VPN connection
+  iptables:
+    chain: INPUT
+    protocol: "{{ openvpn_server_proto }}"
+    destination_port: "{{ openvpn_server_port }}"
+    jump: ACCEPT
+    action: insert
+    comment: "Allow incoming VPN connection"
+  notify: "save firewall"
+
+- name: Firewall - Accept packets from VPN tunnel adaptor
+  iptables:
+    chain: INPUT
+    in_interface: tun0
+    jump: ACCEPT
+    action: insert
+    comment: "Accept packets from VPN tunnel adaptor"
+  notify: "save firewall"
+
+- name: Firewall - Perform NAT readdressing
+  iptables:
+    table: nat
+    chain: POSTROUTING
+    source: "{{ openvpn_server_network }}/ {{ openvpn_server_netmask_cidr }}"
+    to_source: "{{ ansible_default_ipv4.address }}"
+    jump: SNAT
+    action: insert
+    comment: "Perform NAT readdressing"
+  when: not openvpn_server_masquerade_not_snat
+  notify: "save firewall"
+
+- name: Firewall - Perform NAT readdressing with MASQUERADE
+  iptables:
+    table: nat
+    chain: POSTROUTING
+    source: "{{ openvpn_server_network }}/ {{ openvpn_server_netmask_cidr }}"
+    jump: MASQUERADE
+    action: insert
+    comment: "Perform NAT readdressing"
+  when: openvpn_masquerade_not_snat
+  notify: "save firewall"
+
+- name: Save existing Firewall rule before start iptables service
+  shell: "{{ iptables_save_command }}"
+  when: iptables_installed.changed|bool
+#########################################################################################
+
 - name: Install epel-release
   yum:
     name: epel-release
@@ -40,7 +120,6 @@
       - git
       - vim
       - openssl
-      - easy-rsa
       - telnet
       - wget
       - unzip
