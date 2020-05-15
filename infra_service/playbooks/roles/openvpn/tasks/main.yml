@@ -102,7 +102,7 @@
     - openvpn
 
 - name: Sign CA key if not exist before
-  command: openssl x509 -req -in ca-csr.pem -out ca.crt -CAcreateserial -signkey ca-key.pem -sha256 -days {{ openvpn_server_key_days }} -extfile openssl-ca.ext
+  command: /usr/bin/openssl x509 -req -in ca-csr.pem -out ca.crt -CAcreateserial -signkey ca-key.pem -sha256 -days {{ openvpn_server_key_days }} -extfile openssl-ca.ext
   args:
     chdir: "{{ openvpn_server_key_dir }}"
     creates: ca.crt
@@ -111,7 +111,7 @@
     - openvpn
 
 - name: Generate server key if not exist before
-  command: openssl req -nodes -newkey rsa:{{ openvpn_server_rsa_bits }} -keyout server.key -out server.csr -days {{ openvpn_server_key_days }} -subj /CN=OpenVPN-Server-Broker-UA/
+  command: /usr/bin/openssl req -nodes -newkey rsa:{{ openvpn_server_rsa_bits }} -keyout server.key -out server.csr -days {{ openvpn_server_key_days }} -subj /CN=OpenVPN-Server-Broker-UA/
   args:
     chdir: "{{ openvpn_server_key_dir }}"
     creates: server.key
@@ -126,7 +126,7 @@
     - openvpn
 
 - name: Sign server key
-  command: openssl x509 -req -in server.csr -out server.crt -CA ca.crt -CAkey ca-key.pem -sha256 -days {{ openvpn_server_key_days }} -CAcreateserial -extfile openssl-server.ext
+  command: /usr/bin/openssl x509 -req -in server.csr -out server.crt -CA ca.crt -CAkey ca-key.pem -sha256 -days {{ openvpn_server_key_days }} -CAcreateserial -extfile openssl-server.ext
   args:
     chdir: "{{ openvpn_server_key_dir }}"
     creates: server.crt
@@ -134,7 +134,7 @@
     - openvpn
 
 - name: Generate dh params
-  command: openssl dhparam -out {{ openvpn_server_key_dir }}/dh.pem {{ openvpn_server_rsa_bits }}
+  command: /usr/bin/openssl dhparam -out {{ openvpn_server_key_dir }}/dh.pem {{ openvpn_server_rsa_bits }}
   args:
     chdir: "{{ openvpn_server_key_dir }}"
     creates: dh.pem
@@ -234,7 +234,7 @@
     - openvpn
 
 - name: Generate client key
-  command: "openssl req -nodes -newkey rsa:{{ openvpn_server_rsa_bits }} -keyout {{ item }}.key -out {{ item }}.csr -days {{ openvpn_server_key_days }}  -subj /CN=OpenVPN-Client-{{ inventory_hostname[:24] }}-{{ item[:24] }}/"
+  command: "/usr/bin/openssl req -nodes -newkey rsa:{{ openvpn_server_rsa_bits }} -keyout {{ item }}.key -out {{ item }}.csr -days {{ openvpn_server_key_days }}  -subj /CN=OpenVPN-Client-{{ inventory_hostname[:24] }}-{{ item[:24] }}/"
   args:
     chdir: "{{ openvpn_server_key_dir }}"
     creates: "{{ item }}.key"
@@ -251,7 +251,7 @@
     - openvpn
 
 - name: Sign client key
-  command: openssl x509 -req -in {{ item }}.csr -out {{ item }}.crt -CA ca.crt -CAkey ca-key.pem -sha256 -days {{ openvpn_server_key_days }} -extfile openssl-client.ext
+  command: /usr/bin/openssl x509 -req -in {{ item }}.csr -out {{ item }}.crt -CA ca.crt -CAkey ca-key.pem -sha256 -days {{ openvpn_server_key_days }} -extfile openssl-client.ext
   args:
     chdir: "{{ openvpn_server_key_dir }}"
     creates: "{{ item }}.crt"
