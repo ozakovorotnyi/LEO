@@ -29,7 +29,6 @@
     state: present
   register: iptables_installed
   when: ansible_os_family == "RedHat"
-  notify: stop firewalld
   tags:
     - openvpn
     - openvpn.server

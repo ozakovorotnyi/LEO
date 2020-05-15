@@ -12,12 +12,6 @@
     state: restarted
     enabled: yes
 
-- name: stop firewalld
-  service:
-    name: firewalld
-    state: stopped
-    enabled: no
-
 - name: save iptables rules
   shell: "{{ iptables_save_command }}"
   when: ansible_os_family == 'RedHat'
