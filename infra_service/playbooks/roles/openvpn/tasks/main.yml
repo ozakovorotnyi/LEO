@@ -67,7 +67,7 @@
   iptables:
     chain: INPUT
     protocol: "{{ openvpn_server_proto }}"
-    destination_port: {{ openvpn_server_port }}
+    destination_port: '{{ openvpn_server_port }}'
     jump: ACCEPT
     action: insert
     comment: "Allow incoming VPN connection"
