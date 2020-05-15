@@ -221,16 +221,16 @@
 - name: Ensure that the WAN IP of your router is define
   assert:
     that:
-      - {{ openvpn_server_wan_ip }} is defined
+      - "{{ openvpn_server_wan_ip }}" is defined
     fail_msg: "You should define WAN IP address of your router, by default used LAN IP <<< !!!"
     success_msg: "Your {{ openvpn_server_wan_ip }} is defined, all good !!! >>>"
 
 - name: Ensure that the NAT port forwarding is enabled for custom port
   assert:
     that:
-      - {{ openvpn_server_custom_port }} is defined
+      - "{{ openvpn_server_custom_port }}" is defined
     fail_msg: "You should define custom port and enable NAT port forwarding, by default will be used default port <<< !!!"
-    success_msg: "Your {{ openvpn_server_custom_port }} is defined, all good !!! >>>"
+    success_msg: 'Your "{{ openvpn_server_custom_port }}" is defined, all good !!! >>>'
 
 - name: Create openvpn config file
   template:
