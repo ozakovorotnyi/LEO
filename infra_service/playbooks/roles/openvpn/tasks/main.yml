@@ -34,6 +34,7 @@
     name: "{{ item }}"
     state: latest
   with_items:
+    - git
     - openssl
     - easy-rsa
     - telnet
