@@ -12,6 +12,7 @@
 
 - name: Setup OpenVPN server
   hosts: localhost
+  connection: local
   become: true
   roles:
   - { role: openvpn,
