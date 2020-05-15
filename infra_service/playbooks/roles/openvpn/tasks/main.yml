@@ -95,11 +95,13 @@
     - openvpn
 
 - name: Generate CA key
-  command: /usr/bin/openssl req -nodes -newkey rsa:{{ openvpn_server_rsa_bits }} -keyout ca-key.pem -out ca-csr.pem -days {{ openvpn_server_key_days }} -subj /CN=OpenVPN-CA-{{inventory_hostname[:53]}}/
+  command: /usr/bin/openssl req -nodes -newkey rsa:{{ openvpn_server_rsa_bits }} -keyout ca-key.pem -out ca-csr.pem -days {{ openvpn_server_key_days }} -subj /CN=OpenVPN-CA-{{ openvpn_server_hostname }}/
   args:
     chdir: "{{ openvpn_server_key_dir }}"
     creates: ca-key.pem
   when: openvpn_ca_key is not defined
+  tags:
+    - openvpn
 
 - name: Protect CA key if exist
   file:
@@ -119,7 +121,7 @@
     - openvpn
 
 - name: Generate server key if not exist before
-  command: /usr/bin/openssl req -nodes -newkey rsa:{{ openvpn_server_rsa_bits }} -keyout server.key -out server.csr -days {{ openvpn_server_key_days }} -subj /CN=OpenVPN-Server-Broker-UA/
+  command: /usr/bin/openssl req -nodes -newkey rsa:{{ openvpn_server_rsa_bits }} -keyout server.key -out server.csr -days {{ openvpn_server_key_days }} -subj /CN=OpenVPN-Server-{{ openvpn_server_hostname }}/
   args:
     chdir: "{{ openvpn_server_key_dir }}"
     creates: server.key
@@ -256,7 +258,7 @@
     - openvpn
 
 - name: Generate client key
-  command: "/usr/bin/openssl req -nodes -newkey rsa:{{ openvpn_server_rsa_bits }} -keyout {{ item }}.key -out {{ item }}.csr -days {{ openvpn_server_key_days }}  -subj /CN=OpenVPN-Client-{{ inventory_hostname[:24] }}-{{ item[:24] }}/"
+  command: "/usr/bin/openssl req -nodes -newkey rsa:{{ openvpn_server_rsa_bits }} -keyout {{ item }}.key -out {{ item }}.csr -days {{ openvpn_server_key_days }}  -subj /CN=OpenVPN-Client-{{ openvpn_server_hostname }}-{{ item }}/"
   args:
     chdir: "{{ openvpn_server_key_dir }}"
     creates: "{{ item }}.key"
@@ -307,7 +309,7 @@
 - name: Generate client config
   template:
     src: client.ovpn.j2
-    dest: "{{ openvpn_server_base_dir }}/{{ item.0.item }}-{{ inventory_hostname }}.ovpn"
+    dest: "{{ openvpn_server_base_dir }}/{{ item.0.item }}-{{ openvpn_server_hostname }}.ovpn"
     owner: root
     group: root
     mode: 0400

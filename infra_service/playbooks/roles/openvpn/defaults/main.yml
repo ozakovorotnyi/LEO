@@ -1,6 +1,6 @@
 ---
 # defaults file for playbooks/roles/openvpn
-openvpn_server_hostname: "{{inventory_hostname}}"
+openvpn_server_hostname: "vpngw-uabroker"
 
 # Define this one by extra vars '-e'
 #openvpn_server_wan_ip:
