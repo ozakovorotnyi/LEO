@@ -180,7 +180,7 @@
 - name: Check if certificate revocation list database exists
   stat:
     path: "{{ openvpn_server_key_dir }}/index.txt"
-  register: revocationdb.result
+  register: revocationdb
   tags:
     - openvpn
 
@@ -188,7 +188,7 @@
   file:
     path: "{{ openvpn_server_key_dir }}/index.txt"
     state: touch
-  when: revocationdb.result.stat.exists == False
+  when: revocationdb.stat.exists == False
   tags:
     - openvpn
 
