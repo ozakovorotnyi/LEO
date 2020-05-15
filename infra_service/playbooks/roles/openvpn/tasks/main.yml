@@ -230,6 +230,8 @@
     owner: root
     group: root
     mode: 0400
+  tags:
+    - openvpn
 
 - name: Generate client key
   command: "openssl req -nodes -newkey rsa:{{ openvpn_server_rsa_bits }} -keyout {{ item }}.key -out {{ item }}.csr -days {{ openvpn_server_key_days }}  -subj /CN=OpenVPN-Client-{{ inventory_hostname[:24] }}-{{ item[:24] }}/"
@@ -237,12 +239,16 @@
     chdir: "{{ openvpn_server_key_dir }}"
     creates: "{{ item }}.key"
   with_items: "{{ openvpn_server_clients }}"
+  tags:
+    - openvpn
 
 - name: Protect client keys
   file:
     path: "{{ openvpn_server_key_dir }}/{{ item }}.key"
     mode: 0400
   with_items: "{{ openvpn_server_clients }}"
+  tags:
+    - openvpn
 
 - name: Sign client key
   command: openssl x509 -req -in {{ item }}.csr -out {{ item }}.crt -CA ca.crt -CAkey ca-key.pem -sha256 -days {{ openvpn_server_key_days }} -extfile openssl-client.ext
@@ -250,23 +256,31 @@
     chdir: "{{ openvpn_server_key_dir }}"
     creates: "{{ item }}.crt"
   with_items: "{{ openvpn_server_clients }}"
+  tags:
+    - openvpn
 
 - name: Register server ca key
   slurp:
     src: "{{ openvpn_server_key_dir }}/ca.crt"
   register: openvpn_server_ca_cert
+  tags:
+    - openvpn
 
 - name: Register client certs
   slurp:
     src: "{{ openvpn_server_key_dir }}/{{ item }}.crt"
   with_items: "{{ openvpn_server_clients }}"
   register: openvpn_server_client_certs
+  tags:
+    - openvpn
 
 - name: Register client keys
   slurp:
     src: "{{ openvpn_server_key_dir }}/{{ item }}.key"
   with_items: "{{ openvpn_server_clients }}"
   register: openvpn_server_client_keys
+  tags:
+    - openvpn
 
 - name: Generate client config
   template:
@@ -278,3 +292,5 @@
   with_together:
     - "{{ openvpn_server_client_certs.results }}"
     - "{{ openvpn_server_client_keys.results }}"
+  tags:
+    - openvpn
