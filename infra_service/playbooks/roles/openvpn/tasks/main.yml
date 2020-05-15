@@ -221,7 +221,7 @@
 - name: Ensure that the WAN IP of your router is define
   assert:
     that:
-      - '"{{ openvpn_server_wan_ip }}" is defined'
+      - '"{{ openvpn_server_wan_ip }}" is defined or "{{ openvpn_server_lan_ip }}" is defined or'
     fail_msg: "You should define WAN IP address of your router, by default used LAN IP <<< !!!"
     success_msg: 'Your WAN IP {{ openvpn_server_wan_ip }} is defined, all good !!! >>>'
 
