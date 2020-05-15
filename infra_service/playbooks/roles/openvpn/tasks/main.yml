@@ -293,7 +293,7 @@
 - name: Generate client config
   template:
     src: client.ovpn.j2
-    dest: "{{ openvpn_base_dir }}/{{ item.0.item }}-{{ inventory_hostname }}.ovpn"
+    dest: "{{ openvpn_server_base_dir }}/{{ item.0.item }}-{{ inventory_hostname }}.ovpn"
     owner: root
     group: root
     mode: 0400
