@@ -48,12 +48,10 @@ openvpn_server_management_bind: /var/run/openvpn/management unix
 openvpn_server_management_client_user: root
 openvpn_server_rsa_bits: 2048
 openvpn_server_key_days: 3650
-
 openvpn_server_ca_key.key: {}
 openvpn_server_ca_key.crt: {}
 
-
 openvpn_server_systemctl_ipv4_forvarding_enabled: true
 
-
-openvpn_server_clients: ['zaka']
+### Define people who should have access to VPN ###
+openvpn_server_clients: ['zaka', 'ale', 'maks']

@@ -8,6 +8,7 @@
     system: yes
   tags:
     - openvpn
+    - openvpn.server
     - openvpn.server.nogroup
 
 - name: Enable ipv4 forwarding
@@ -18,6 +19,7 @@
   when: openvpn_server_systemctl_ipv4_forvarding_enabled
   tags:
     - openvpn
+    - openvpn.server
     - openvpn.server.enable_ipv4.forwarding
 
 - name: Install epel-release
@@ -27,7 +29,9 @@
   when: ansible_distribution == "CentOS" or ansible_distribution=="RedHat"
   tags:
     - openvpn
-    - openvpn.epel.release.install
+    - openvpn.server
+    - openvpn.server.install
+    - openvpn.server.install.epel
 
 - name: Install base packages
   yum:
@@ -42,24 +46,28 @@
       - unzip
   tags:
     - openvpn
-    - openvpn.install.defaul.packages
+    - openvpn.server
+    - openvpn.server.install
+    - openvpn.server.install.packages
 
-- name: Install openvpn server
+- name: Install OpenVPN server
   yum:
     name: openvpn
     state: latest
     enablerepo: epel
   tags:
     - openvpn
+    - openvpn.server
     - openvpn.server.install
 
-- name: Create openvpn key directory
+- name: Create OpenVPN key directory
   file:
     path: "{{ openvpn_server_key_dir }}"
     state: directory
   tags:
     - openvpn
-    - openvpn.server.key.dir
+    - openvpn.server
+    - openvpn.server.dir.key
 
 - name: Copy openssl server/ca extensions
   copy:
@@ -73,8 +81,12 @@
     - openssl-server.ext
   tags:
     - openvpn
-    - openvpn.server.key.ca.ext.copy
-    - openvpn.server.key.server.copy
+    - openvpn.ca
+    - openvpn.server
+    - openvpn.ca.ext
+    - openvpn.server.ext
+    - openvpn.ca.ext.copy
+    - openvpn.server.ext.copy
 
 - name: Copy CA key if exist
   copy:
@@ -84,6 +96,10 @@
   when: openvpn_server_ca_key is defined
   tags:
     - openvpn
+    - openvpn.ca.key
+    - openvpn.ca.server
+    - openvpn.ca.server.key
+    - openvpn.ca.server.key.copy
 
 - name: Copy CA cert if exist
   copy:
@@ -93,6 +109,10 @@
   when: openvpn_server_ca_key is defined
   tags:
     - openvpn
+    - openvpn.ca.crt
+    - openvpn.ca.server
+    - openvpn.ca.server.crt
+    - openvpn.ca.server.crt.copy
 
 - name: Generate CA key
   command: /usr/bin/openssl req -nodes -newkey rsa:{{ openvpn_server_rsa_bits }} -keyout ca-key.pem -out ca-csr.pem -days {{ openvpn_server_key_days }} -subj /CN=OpenVPN-CA-{{ openvpn_server_hostname }}/
@@ -102,6 +122,10 @@
   when: openvpn_ca_key is not defined
   tags:
     - openvpn
+    - openvpn.ca.key
+    - openvpn.ca.server
+    - openvpn.ca.server.generate
+    - openvpn.ca.server.generate.key
 
 - name: Protect CA key if exist
   file:
@@ -110,6 +134,10 @@
   when: openvpn_server_ca_key is not defined
   tags:
     - openvpn
+    - openvpn.ca.key
+    - openvpn.ca.server
+    - openvpn.ca.server.protect
+    - openvpn.ca.server.protect.key
 
 - name: Sign CA key if not exist before
   command: /usr/bin/openssl x509 -req -in ca-csr.pem -out ca.crt -CAcreateserial -signkey ca-key.pem -sha256 -days {{ openvpn_server_key_days }} -extfile openssl-ca.ext
@@ -119,6 +147,10 @@
   when: openvpn_server_ca_key is not defined
   tags:
     - openvpn
+    - openvpn.ca.key
+    - openvpn.ca.server
+    - openvpn.ca.server.sign
+    - openvpn.ca.server.sign.key
 
 - name: Generate server key if not exist before
   command: /usr/bin/openssl req -nodes -newkey rsa:{{ openvpn_server_rsa_bits }} -keyout server.key -out server.csr -days {{ openvpn_server_key_days }} -subj /CN=OpenVPN-Server-{{ openvpn_server_hostname }}/
@@ -127,6 +159,9 @@
     creates: server.key
   tags:
     - openvpn
+    - openvpn.server.key
+    - openvpn.server.generate
+    - openvpn.server.generate.key
 
 - name: Protect server key
   file:
@@ -134,6 +169,9 @@
     mode: 0400
   tags:
     - openvpn
+    - openvpn.server.key
+    - openvpn.server.protect
+    - openvpn.server.protect.key
 
 - name: Sign server key
   command: /usr/bin/openssl x509 -req -in server.csr -out server.crt -CA ca.crt -CAkey ca-key.pem -sha256 -days {{ openvpn_server_key_days }} -CAcreateserial -extfile openssl-server.ext
@@ -142,6 +180,9 @@
     creates: server.crt
   tags:
     - openvpn
+    - openvpn.server.key
+    - openvpn.server.sign
+    - openvpn.server.sign.key
 
 - name: Generate dh params
   command: /usr/bin/openssl dhparam -out {{ openvpn_server_key_dir }}/dh.pem {{ openvpn_server_rsa_bits }}
@@ -150,6 +191,8 @@
     creates: dh.pem
   tags:
     - openvpn
+    - openvpn.dh
+    - openvpn.dh.generate
 
 - name: Install ca.conf config file
   template:
@@ -160,6 +203,9 @@
     mode: 744
   tags:
     - openvpn
+    - openvpn.ca
+    - openvpn.ca.install
+    - openvpn.ca.install.cfg
 
 - name: Create initial certificate revocation list squence number
   shell: "echo 00 > crl_number"
@@ -168,6 +214,8 @@
     creates: crl_number
   tags:
     - openvpn
+    - openvpn.revocation.init
+    - openvpn.revocation.init.seq
 
 - name: Install revocation script
   template:
@@ -178,6 +226,8 @@
     mode: 744
   tags:
     - openvpn
+    - openvpn.revocation.init
+    - openvpn.revocation.init.script
 
 - name: Check if certificate revocation list database exists
   stat:
@@ -185,6 +235,8 @@
   register: revocationdb
   tags:
     - openvpn
+    - openvpn.revocation.db
+    - openvpn.revocation.init
 
 - name: Create certificate revocation list database if required
   file:
@@ -193,6 +245,9 @@
   when: revocationdb.stat.exists == False
   tags:
     - openvpn
+    - openvpn.revocation.init
+    - openvpn.revocation.create
+    - openvpn.revocation.create.db
 
 - name: Set up certificate revocation list
   command: /bin/sh revoke.sh
@@ -201,6 +256,9 @@
     creates: "{{ openvpn_server_key_dir }}/ca-crl.pem"
   tags:
     - openvpn
+    - openvpn.revocation.init
+    - openvpn.revocation.setup
+    - openvpn.revocation.setup.list
 
 - name: Install crl-cron script
   template:
@@ -211,6 +269,8 @@
     mode: 744
   tags:
     - openvpn
+    - openvpn.crl
+    - openvpn.crl.script
 
 - name: Add cron to check every Saturday if the CRL needs to be renewed
   cron:
@@ -219,22 +279,10 @@
     job: "sh {{ openvpn_server_key_dir }}/crl-cron.sh"
   tags:
     - openvpn
+    - openvpn.crl
+    - openvpn.crl.cron
 
-#- name: Ensure that the WAN IP of your router is define
-#  assert:
-#    that:
-#      - openvpn_server_wan_ip is defined or openvpn_server_lan_ip is defined
-#    fail_msg: "You should define WAN IP address of your router, by default used LAN IP <<< !!!"
-#    success_msg: 'Your WAN IP {{ openvpn_server_wan_ip }} is defined, all good !!! >>>'
-#
-#- name: Ensure that the NAT port forwarding is enabled for this custom port
-#  assert:
-#    that:
-#      - '"{{ openvpn_server_custom_port }}" is defined'
-#    fail_msg: "You should define custom port and enable NAT port forwarding, by default will be used default port <<< !!!"
-#    success_msg: 'Your cutom PORT {{ openvpn_server_custom_port }} is defined, all good !!! >>>'
-
-- name: Create openvpn config file
+- name: Create OpenVPN server config file
   template:
     src: server.conf.j2
     dest: "{{ openvpn_server_base_dir }}/{{ openvpn_server_config_file }}.conf"
@@ -244,6 +292,9 @@
     - restart openvpn
   tags:
     - openvpn
+    - openvpn.config
+    - openvpn.config.server
+    - openvpn.config.server.init
 
 ########## Client certificates ##############
 
@@ -256,6 +307,9 @@
     mode: 0400
   tags:
     - openvpn
+    - openvpn.client
+    - openvpn.client.ext
+    - openvpn.client.ext.copy
 
 - name: Generate client key
   command: "/usr/bin/openssl req -nodes -newkey rsa:{{ openvpn_server_rsa_bits }} -keyout {{ item }}.key -out {{ item }}.csr -days {{ openvpn_server_key_days }}  -subj /CN=OpenVPN-Client-{{ openvpn_server_hostname }}-{{ item }}/"
@@ -265,6 +319,9 @@
   with_items: "{{ openvpn_server_clients }}"
   tags:
     - openvpn
+    - openvpn.client
+    - openvpn.client.generate
+    - openvpn.client.generate.key
 
 - name: Protect client keys
   file:
@@ -273,6 +330,9 @@
   with_items: "{{ openvpn_server_clients }}"
   tags:
     - openvpn
+    - openvpn.client
+    - openvpn.client.protect
+    - openvpn.client.protect.key
 
 - name: Sign client key
   command: /usr/bin/openssl x509 -req -in {{ item }}.csr -out {{ item }}.crt -CA ca.crt -CAkey ca-key.pem -sha256 -days {{ openvpn_server_key_days }} -extfile openssl-client.ext
@@ -282,13 +342,20 @@
   with_items: "{{ openvpn_server_clients }}"
   tags:
     - openvpn
+    - openvpn.client
+    - openvpn.client.sign
+    - openvpn.client.sign.key
 
-- name: Register server ca key
+- name: Register server CA key
   slurp:
     src: "{{ openvpn_server_key_dir }}/ca.crt"
   register: openvpn_server_ca_cert
   tags:
     - openvpn
+    - openvpn.ca.key
+    - openvpn.ca.server
+    - openvpn.ca.server.register
+    - openvpn.ca.server.register.key
 
 - name: Register client certs
   slurp:
@@ -297,6 +364,9 @@
   register: openvpn_server_client_certs
   tags:
     - openvpn
+    - openvpn.client
+    - openvpn.client.register
+    - openvpn.client.register.crt
 
 - name: Register client keys
   slurp:
@@ -305,6 +375,9 @@
   register: openvpn_server_client_keys
   tags:
     - openvpn
+    - openvpn.client
+    - openvpn.client.register
+    - openvpn.client.register.key
 
 - name: Generate client config
   template:
@@ -318,3 +391,6 @@
     - "{{ openvpn_server_client_keys.results }}"
   tags:
     - openvpn
+    - openvpn.client
+    - openvpn.client.config
+    - openvpn.client.config.generate
