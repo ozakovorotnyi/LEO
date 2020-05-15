@@ -1,2 +1,22 @@
 ---
 # handlers file for playbooks/roles/openvpn
+- name: restart openvpn
+  service:
+    name: "{{ openvpn_server_service_name }}"
+    state: restarted
+    enabled: yes
+
+- name: restart iptables
+  service:
+    name: iptables
+    state: restarted
+
+- name: restart firewalld
+  service:
+    name: firewalld
+    state: restarted
+
+- name: save iptables rules (Debian/Ubuntu and CentOS/RHEL/Fedora)
+  shell: "{{ iptables_save_command }}"
+  when: ansible_os_family == 'Debian' or ansible_os_family == 'RedHat'
+  listen: "save iptables"

@@ -1,9 +1,51 @@
 ---
 # defaults file for playbooks/roles/openvpn
+openvpn_server_hostname: "{{inventory_hostname}}"
+openvpn_server_service_name: openvpn
+openvpn_server_base_dir: /etc/openvpn
 openvpn_server_key_dir: /etc/openvpn/keys
+openvpn_server_port: 1194
+openvpn_server_resolv_retry: 5
+openvpn_server_dualstack: false
+openvpn_server_proto: udp
+openvpn_server_use_crl: false
+openvpn_server_tls_auth_required: false
+openvpn_server_auth_alg: SHA256
+openvpn_server_cipher: AES-256-CBC
+openvpn_server_tun_mtu:
+openvpn_server_use_hardened_tls: true
+openvpn_server_use_modern_tls: true
+openvpn_server_duplicate_cn: false
+openvpn_server_client_to_client: false
+openvpn_server_network: 10.10.2.0
+openvpn_server_netmask: 255.255.255.0
+openvpn_server_redirect_gateway: true
+openvpn_server_set_dns: true
+openvpn_server_custom_dns: false
+openvpn_server_dns_servers: []
+openvpn_server_client_register_dns: true
+openvpn_server_push: []
+openvpn_server_keepalive_ping: 5
+openvpn_server_keepalive_timeout: 30
+openvpn_server_compression: lzo
+openvpn_server_service_user: nobody
+openvpn_server_service_group: nogroup
+openvpn_server_addl_server_options: []
+openvpn_server_addl_client_options: []
+openvpn_server_status_version: 1
+openvpn_server_config_file: "openvpn_{{ openvpn_server_proto }}_{{ openvpn_server_port }}"
+openvpn_server_log_dir: /var/log
+openvpn_server_log_file: openvpn.log
+openvpn_server_verify_cn: false
+openvpn_server_enable_management: false
+openvpn_server_management_bind: /var/run/openvpn/management unix
+openvpn_server_management_client_user: root
 openvpn_server_rsa_bits: 2048
 openvpn_server_key_days: 3650
 
 #openvpn_server_ca_key:
 
 openvpn_server_systemctl_ipv4_forvarding_enabled: true
+
+
+openvpn_server_clients: ['zaka']
