@@ -94,13 +94,13 @@
   tags:
     - openvpn
 
-- name: Protect CA key if exist
-  file:
-    path: "{{ openvpn_server_ca_key.crt }}/ca-key.pem"
-    mode: 0400
-  when: openvpn_server_ca_key is not defined
-  tags:
-    - openvpn
+#- name: Protect CA key if exist
+#  file:
+#    path: "{{ openvpn_server_ca_key.crt }}/ca-key.pem"
+#    mode: 0400
+#  when: openvpn_server_ca_key is not defined
+#  tags:
+#    - openvpn
 
 - name: Sign CA key if not exist before
   command: /usr/bin/openssl x509 -req -in ca-csr.pem -out ca.crt -CAcreateserial -signkey ca-key.pem -sha256 -days {{ openvpn_server_key_days }} -extfile openssl-ca.ext
