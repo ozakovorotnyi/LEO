@@ -394,3 +394,48 @@
     - openvpn.client
     - openvpn.client.config
     - openvpn.client.config.generate
+
+############### Revoke client crt, config ###############
+- name: Remove client config
+  file:
+    path: "{{ openvpn_server_base_dir }}/client/{{item}}-{{ openvpn_server_hostname }}.ovpn"
+    state: absent
+    force: yes
+  with_items: '{{ openvpn_revoke_these_certs }}'
+  tags:
+    - openvpn
+    - openvpn.revoke.client
+    - openvpn.revoke.client.config
+
+- name: Revoke certificates
+  command: sh revoke.sh {{ item }}.crt
+  args:
+    chdir: "{{ openvpn_server_key_dir }}"
+  with_items: '{{ openvpn_revoke_these_certs }}'
+  tags:
+    - openvpn
+    - openvpn.revoke.client
+    - openvpn.revoke.client.crt
+
+- name: Remove client key
+  file:
+    path: "{{ openvpn_server_key_dir }}/{{ item }}.key"
+    state: absent
+    force: yes
+  with_items: '{{ openvpn_revoke_these_certs }}'
+  tags:
+    - openvpn
+    - openvpn.revoke.client
+    - openvpn.revoke.client.key
+
+- name: Remove client csr
+  file:
+    path: "{{ openvpn_server_key_dir }}/{{ item }}.csr"
+    state: absent
+    force: yes
+  with_items: '{{ openvpn_revoke_these_certs }}'
+  tags:
+    - openvpn
+    - openvpn.revoke.client
+    - openvpn.revoke.client.csr
+#########################################################
