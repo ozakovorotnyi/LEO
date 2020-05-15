@@ -14,7 +14,7 @@ openvpn_server_port: 1194
 openvpn_server_resolv_retry: 5
 openvpn_server_dualstack: false
 openvpn_server_proto: udp
-openvpn_server_use_crl: false
+openvpn_server_use_crl: true
 openvpn_server_tls_auth_required: false
 openvpn_server_auth_alg: SHA256
 openvpn_server_cipher: AES-256-CBC
