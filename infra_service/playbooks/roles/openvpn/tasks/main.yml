@@ -103,7 +103,7 @@
 
 - name: Protect CA key if exist
   file:
-    path: "{{ openvpn_server_ca_key.crt }}/ca-key.pem"
+    path: "{{ openvpn_server_key_dir }}/ca-key.pem"
     mode: 0400
   when: openvpn_server_ca_key is not defined
   tags:
