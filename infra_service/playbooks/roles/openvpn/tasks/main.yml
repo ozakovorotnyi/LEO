@@ -225,7 +225,7 @@
     owner: root
     group: root
   notify:
-    - restart "{{ openvpn_server_service_name }}"
+    - restart {{ openvpn_server_service_name }}
   tags:
     - openvpn
 
