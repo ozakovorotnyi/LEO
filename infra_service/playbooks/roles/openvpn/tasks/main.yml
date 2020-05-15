@@ -67,7 +67,7 @@
   iptables:
     chain: INPUT
     protocol: "{{ openvpn_server_proto }}"
-    destination_port: "{{ openvpn_server_port }}"
+    destination_port: {{ openvpn_server_port }}
     jump: ACCEPT
     action: insert
     comment: "Allow incoming VPN connection"
@@ -114,7 +114,7 @@
     jump: MASQUERADE
     action: insert
     comment: "Perform NAT readdressing"
-  when: openvpn_masquerade_not_snat
+  when: openvpn_server_masquerade_not_snat
   notify: "save firewall"
   tags:
     - openvpn
