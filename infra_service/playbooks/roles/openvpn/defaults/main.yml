@@ -59,4 +59,4 @@ openvpn_server_systemctl_ipv4_forvarding_enabled: true
 openvpn_server_clients: ['zaka', 'ale', 'maks']
 
 ### Define people if you want revoke crt and delete key, config ###
-openvpn_revoke_these_certs: ['maks']
+openvpn_revoke_these_certs: ['maks', 'ale']
