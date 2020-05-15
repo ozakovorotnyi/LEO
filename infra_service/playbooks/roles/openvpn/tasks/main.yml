@@ -44,6 +44,10 @@
     action: insert
     comment: "Allow VPN forwarding"
   notify: "save firewall"
+  tags:
+    - openvpn
+    - openvpn.firewall
+    - openvpn.firewall.fw
 
 - name: Firewall - Allow incoming SSH connection
   iptables:
@@ -54,6 +58,10 @@
     action: insert
     comment: "Allow incoming SSH connection"
   notify: "save firewall"
+  tags:
+    - openvpn
+    - openvpn.firewall
+    - openvpn.firewall.fw
 
 - name: Firewall - Allow incoming VPN connection
   iptables:
@@ -64,6 +72,10 @@
     action: insert
     comment: "Allow incoming VPN connection"
   notify: "save firewall"
+  tags:
+    - openvpn
+    - openvpn.firewall
+    - openvpn.firewall.fw
 
 - name: Firewall - Accept packets from VPN tunnel adaptor
   iptables:
@@ -73,6 +85,10 @@
     action: insert
     comment: "Accept packets from VPN tunnel adaptor"
   notify: "save firewall"
+  tags:
+    - openvpn
+    - openvpn.firewall
+    - openvpn.firewall.fw
 
 - name: Firewall - Perform NAT readdressing
   iptables:
@@ -85,6 +101,10 @@
     comment: "Perform NAT readdressing"
   when: not openvpn_server_masquerade_not_snat
   notify: "save firewall"
+  tags:
+    - openvpn
+    - openvpn.firewall
+    - openvpn.firewall.fw
 
 - name: Firewall - Perform NAT readdressing with MASQUERADE
   iptables:
@@ -96,10 +116,18 @@
     comment: "Perform NAT readdressing"
   when: openvpn_masquerade_not_snat
   notify: "save firewall"
+  tags:
+    - openvpn
+    - openvpn.firewall
+    - openvpn.firewall.fw
 
 - name: Save existing Firewall rule before start iptables service
   shell: "{{ iptables_save_command }}"
   when: iptables_installed.changed|bool
+  tags:
+    - openvpn
+    - openvpn.firewall
+    - openvpn.firewall.fw
 #########################################################################################
 
 - name: Install epel-release
