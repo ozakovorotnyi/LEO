@@ -17,5 +17,6 @@
   roles:
   - { role: openvpn,
       tags: [ 'openvpn' ],
-      openvpn_server_clients: [ 'ale', 'amo', 'eni', 'jle', 'ksa', 'mni', 'nmo', 'oza', 'smo', 'dle' ]
+      openvpn_server_clients: [ 'ale', 'amo', 'eni', 'jle', 'ksa', 'mni', 'nmo', 'oza', 'smo', 'dle' ],
+      openvpn_revoke_these_certs: []
     }
