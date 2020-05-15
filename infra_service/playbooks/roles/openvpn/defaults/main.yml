@@ -1,0 +1,9 @@
+---
+# defaults file for playbooks/roles/openvpn
+openvpn_server_key_dir: /etc/openvpn/keys
+openvpn_server_rsa_bits: 2048
+openvpn_server_key_days: 3650
+
+#openvpn_server_ca_key:
+
+openvpn_server_systemctl_ipv4_forvarding_enabled: true
