@@ -1,7 +1,7 @@
 Role Name
 =========
 
-A brief description of the role goes here.
+This role installs OpenVPN, configures it as a server, sets up networking iptables and can optionally create client certificates.
 
 Requirements
 ------------
@@ -18,14 +18,23 @@ Dependencies
 
 A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
 
+Example of run
+----------------
+- First you should install Ansible like
+    - RedHat command are 'yum install ansible -y' or 'pip install ansible'
+    - Debian/Ubuntu command are 'apt-get install ansible -y'    
+- Second '77.77.77.77' it should be your external IP address
+
+        - ansible-playbook playbooks/infra-leo.yml -i inventory/host_vars/openvpn-server -l openvpn-server -bD -e openvpn_server_wan_ip=77.77.77.77
+
 Example Playbook
 ----------------
 
 Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
 
-    - hosts: servers
+    - hosts: localhost
       roles:
-         - { role: username.rolename, x: 42 }
+         - { role: openvpn, tags: [ 'openvpn' ] }
 
 License
 -------
