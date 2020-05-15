@@ -5,7 +5,7 @@ openvpn_server_hostname: "vpngw-uabroker"
 
 
 ### Define people who should have access to VPN ###
-openvpn_server_clients: ['zaka']
+openvpn_server_clients: []
 
 
 ### Define people if you want revoke crt and delete key, config ###

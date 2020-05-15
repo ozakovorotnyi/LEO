@@ -4,14 +4,17 @@
 #
 ###############################################################################
 
-- name: Setup MSSQL Database service
-  hosts: mssql-server-group
-  become: true
-  roles:
-  - { role: mssql-server-preview, tags: [ 'mssql-server-preview' ] }
+#- name: Setup MSSQL Database service
+#  hosts: mssql-server-group
+#  become: true
+#  roles:
+#  - { role: mssql-server-preview, tags: [ 'mssql-server-preview' ] }
 
 - name: Setup OpenVPN server
   hosts: localhost
   become: true
   roles:
-  - { role: openvpn, tags: [ 'openvpn' ] }
+  - { role: openvpn,
+      tags: [ 'openvpn' ],
+      openvpn_server_clients: [ 'ale', 'amo', 'eni', 'jle', 'ksa', 'mni', 'nmo', 'oza', 'smo', 'dle' ]
+    }
