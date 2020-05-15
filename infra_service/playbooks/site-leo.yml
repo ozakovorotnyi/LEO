@@ -1,6 +1,6 @@
 ###############################################################################
 #
-# Global Infrastructure Support Host Groups
+# Global UA-Broker Infrastructure Support Host Groups
 #
 ###############################################################################
 
@@ -9,3 +9,9 @@
   become: true
   roles:
   - { role: mssql-server-preview, tags: [ 'mssql-server-preview' ] }
+
+- name: Setup OpenVPN server
+  hosts: localhost
+  become: true
+  roles:
+  - { role: openvpn, tags: [ 'openvpn' ] }
