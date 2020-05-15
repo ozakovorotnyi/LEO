@@ -33,7 +33,7 @@ openvpn_server_service_group: nogroup
 openvpn_server_addl_server_options: []
 openvpn_server_addl_client_options: []
 openvpn_server_status_version: 1
-openvpn_server_config_file: "openvpn_{{ openvpn_server_proto }}_{{ openvpn_server_port }}"
+openvpn_server_config_file: "server.conf"
 openvpn_server_log_dir: /var/log
 openvpn_server_log_file: openvpn.log
 openvpn_server_verify_cn: false
