@@ -34,7 +34,7 @@ openvpn_server_use_modern_tls: true
 openvpn_server_duplicate_cn: false
 openvpn_server_client_to_client: false
 openvpn_server_network: 10.10.2.0
-openvpn_server_netmask_cidr: "/24"
+openvpn_server_netmask_cidr: 24
 openvpn_server_netmask: 255.255.255.0
 openvpn_server_redirect_gateway: true
 openvpn_server_set_dns: true
