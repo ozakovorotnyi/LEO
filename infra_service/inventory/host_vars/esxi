@@ -1,0 +1,2 @@
+[esxi-production]
+ansible_host=host ansible_port=1150

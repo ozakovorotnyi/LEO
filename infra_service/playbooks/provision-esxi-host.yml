@@ -1,0 +1,52 @@
+---
+# Create a new VM on an ESX server
+# Returns changed = False when the VM already exists
+# Returns changed = True and a adds ansible_facts from the new VM
+# State will set the power status of a guest upon creation. Use powered_on to create and boot.
+# Options ['state', 'vm_extra_config', 'vm_disk', 'vm_nic', 'vm_hardware', 'esxi'] are required together
+# Note: vm_floppy support added in 2.0
+
+- vsphere_guest:
+    vcenter_hostname: "{{ esxi_remote_host }}:{{ esxi_remote_port }}"
+    username: "{{ esxi_remote_username }}"
+    password: "{{ esxi_remote_password }}"
+    guest: zaka_test
+    state: powered_on
+    vm_extra_config:
+      vcpu.hotadd: yes
+      mem.hotadd:  yes
+      notes: This is a test VM
+      folder: zaka_test_folder
+    vm_disk:
+      disk1:
+        size_gb: "{{ esxi_remote_disk1_size }}"
+        type: "{{ esxi_remote_disk_type }}"
+        datastore: "{{ esxi_remote_hdd_datastore }}"
+        # VMs can be put into folders. The value given here is either the full path
+        # to the folder (e.g. production/customerA/lamp) or just the last component
+        # of the path (e.g. lamp):
+        folder: zaka/custom/test
+    vm_nic:
+      nic1:
+        type: "{{ esxi_remote_vmnic_type }}"
+        network: "{{ esxi_remote_vmnic_network }}"
+        network_type: standard
+#      nic2:
+#        type: vmxnet3
+#        network: dvSwitch Network
+#        network_type: dvs
+    vm_hardware:
+      memory_mb: 4096
+      num_cpus: 2
+      osid: centos74Guest
+      scsi: paravirtual
+      vm_cdrom:
+        type: "iso"
+        iso_path: "Data_hdd/ISO-Images/CentOS-7-x86_64-DVD-1908.iso"
+#      vm_floppy:
+#        type: "image"
+#        image_path: "DatastoreName/floppy-image.flp"
+#    esxi:
+#      datacenter: MyDatacenter
+#      hostname: esx001.mydomain.local
+#  delegate_to: localhost

@@ -1,0 +1,10 @@
+esxi_remote_host: ""
+esxi_remote_port: 1150
+esxi_remote_username: "root"
+esxi_remote_password: ""
+esxi_remote_hdd_datastore: "Data_hdd"
+esxi_remote_ssd_datastore: "Data_ssd"
+esxi_remote_disk_type: "Thin"
+esxi_remote_disk1_size: 100
+esxi_remote_vmnic_type: "vmxnet3"
+esxi_remote_vmnic_network: "VM Network"
