@@ -31,16 +31,15 @@
 
 - name: Install base packages
   yum:
-    name: "{{ item }}"
-    state: latest
-  with_items:
-    - git
-    - vim
-    - openssl
-    - easy-rsa
-    - telnet
-    - wget
-    - unzip
+    state: present
+    name:
+      - git
+      - vim
+      - openssl
+      - easy-rsa
+      - telnet
+      - wget
+      - unzip
   tags:
     - openvpn
     - openvpn.install.defaul.packages
