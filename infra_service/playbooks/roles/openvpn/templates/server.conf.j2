@@ -17,7 +17,8 @@ dh {{ openvpn_server_key_dir }}/dh.pem
 {% if openvpn_server_tls_auth_required %} tls-auth {{ openvpn_server_key_dir }}/ta.key 0
 {% endif %}
 
-tls-server auth {{ openvpn_server_auth_alg | default('SHA256') }}
+tls-server
+auth {{ openvpn_server_auth_alg | default('SHA256') }}
 cipher {{ openvpn_server_cipher }}
 
 {% if openvpn_server_tun_mtu %} tun-mtu {{ openvpn_server_tun_mtu }}
