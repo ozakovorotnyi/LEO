@@ -7,7 +7,7 @@ remote-cert-tls server
 {% if openvpn_server_use_modern_tls %} tls-version-min 1.2 {% endif %}
 
 proto {{ openvpn_server_proto }}
-remote {{ openvpn_server_wan_ip | default({{ openvpn_server_lan_ip }}) }} {{ openvpn_server_custom_port | default({{ openvpn_server_port }}) }}
+remote {{ openvpn_server_wan_ip | default('{{ openvpn_server_lan_ip }}') }} {{ openvpn_server_custom_port | default('{{ openvpn_server_port }}') }}
 dev tun
 
 resolv-retry {{ openvpn_server_resolv_retry }}
