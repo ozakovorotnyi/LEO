@@ -95,7 +95,7 @@
     table: nat
     chain: POSTROUTING
     source: "{{ openvpn_server_network }}/{{ openvpn_server_netmask_cidr }}"
-    to_source: "{{ ansible_default_ipv4.address }}"
+    to_source: "{{ ansible_default_ipv4.address | default(openvpn_server_lan_ip) }}"
     jump: SNAT
     action: insert
     comment: "Perform NAT readdressing"
