@@ -10,9 +10,8 @@ proto {{ openvpn_server_proto }}
 remote {{ openvpn_server_wan_ip | default(openvpn_server_lan_ip) }} {{ openvpn_server_custom_port | default(openvpn_server_port) }}
 
 dev {% if openvpn_server_tun_mode %} {{ openvpn_server_inetrface_type_tup }}
-{% elif openvpn_server_tap_mode %} {{ openvpn_server_inetrface_type_tap[:3] }}
-{% else %}
-dev is not specified
+{% elif openvpn_server_tap_mode %} {{ openvpn_server_inetrface_type_tap[3:] }}
+{% else %} dev is not specified
 {% endif %}
 
 resolv-retry {{ openvpn_server_resolv_retry }}
