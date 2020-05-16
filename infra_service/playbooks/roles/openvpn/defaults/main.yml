@@ -21,6 +21,7 @@ openvpn_server_base_dir: /etc/openvpn
 openvpn_server_key_dir: /etc/openvpn/keys
 openvpn_server_custom_port: 9119
 openvpn_server_port: 1194
+openvpn_server_inetrface_type: tap0
 openvpn_server_resolv_retry: 5
 openvpn_server_dualstack: false
 openvpn_server_proto: udp
