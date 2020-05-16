@@ -57,7 +57,7 @@ openvpn_server_keepalive_timeout: 30
 openvpn_server_compression: lzo
 openvpn_server_service_user: nobody
 openvpn_server_service_group: nogroup
-openvpn_server_addl_server_options: []
+openvpn_server_addl_server_options: [ 'option "redirect-gateway def1"', 'option "remote-gateway {{ openvpn_server_lan_ip }}"']
 openvpn_server_addl_client_options: []
 openvpn_server_status_version: 1
 openvpn_server_config_file: "server"
