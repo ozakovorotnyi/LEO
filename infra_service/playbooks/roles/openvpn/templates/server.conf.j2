@@ -4,13 +4,8 @@ port {{ openvpn_server_port }}
 {% if openvpn_server_dualstack %} proto {{ openvpn_server_proto }}6 {% else %} proto {{ openvpn_server_proto }}
 {% endif %}
 
-{% if openvpn_server_tun_mode %}
-dev {{ openvpn_server_inetrface_type_tup }}
-{% endif %}
-
-{% if openvpn_server_tap_mode %}
-dev {{ openvpn_server_inetrface_type_tap }}
-{% endif %}
+{% if openvpn_server_tun_mode %}dev {{ openvpn_server_inetrface_type_tup }} {% endif %}
+{% if openvpn_server_tap_mode %}dev {{ openvpn_server_inetrface_type_tap }} {% endif %}
 
 ca {{ openvpn_server_key_dir }}/ca.crt
 cert {{ openvpn_server_key_dir }}/server.crt
@@ -49,6 +44,7 @@ server {{ openvpn_server_network }} {{ openvpn_server_netmask }}
 {% if openvpn_server_tap_mode|bool %}
 #https://openvpn.net/community-resources/ethernet-bridging/
 server-bridge {{ openvpn_server_lan_ip }} {{ openvpn_server_netmask }} {{ openvpn_server_vpn_start_dhcp }} {{ openvpn_server_vpn_end_dhcp }}
+{% endif %}
 {% endif %}
 
 {% if openvpn_server_ipv6_network is defined %} server-ipv6 {{ openvpn_server_ipv6_network }}
