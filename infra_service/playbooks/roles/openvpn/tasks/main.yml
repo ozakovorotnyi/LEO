@@ -404,6 +404,40 @@
     - openvpn.config.server
     - openvpn.config.server.init
 
+- name: Create OpenVPN scripts TAP up
+  template:
+    src: bridge-start.j2
+    dest: "{{ openvpn_server_base_dir }}/server/bridge-start.sh"
+    owner: "{{ openvpn_server_script_owner }}"
+    group: "{{ openvpn_server_script_group }}"
+    mode: 755
+  notify:
+    - restart openvpn
+  tags:
+    - openvpn
+    - openvpn.config
+    - openvpn.config.server
+    - openvpn.config.server.init
+    - openvpn.config.server.script.bridge
+    - openvpn.config.server.script.tap.up
+
+- name: Create OpenVPN scripts TAP down
+  template:
+    src: bridge-stop.j2
+    dest: "{{ openvpn_server_base_dir }}/server/bridge-stop.sh"
+    owner: "{{ openvpn_server_script_owner }}"
+    group: "{{ openvpn_server_script_group }}"
+    mode: 755
+  notify:
+    - restart openvpn
+  tags:
+    - openvpn
+    - openvpn.config
+    - openvpn.config.server
+    - openvpn.config.server.init
+    - openvpn.config.server.script.bridge
+    - openvpn.config.server.script.tap.stop
+
 ########## Client certificates ##############
 
 - name: Copy openssl client extensions
