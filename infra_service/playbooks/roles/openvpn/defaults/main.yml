@@ -49,7 +49,7 @@ openvpn_server_tun_mtu:
 openvpn_server_use_hardened_tls: true
 openvpn_server_use_modern_tls: true
 openvpn_server_duplicate_cn: false
-openvpn_server_client_to_client: false
+openvpn_server_client_to_client: true
 openvpn_server_client_register_dns: true
 openvpn_server_push: []
 openvpn_server_keepalive_ping: 5
