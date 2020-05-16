@@ -17,6 +17,7 @@ openvpn_revoke_these_certs: []
 
 openvpn_server_lan_ip: 10.10.1.254
 openvpn_server_netmask: 255.255.255.0
+openvpn_server_net_broadcast: 10.10.1.255
 openvpn_server_netmask_cidr: 24
 openvpn_server_vpn_start_dhcp: 10.10.1.200
 openvpn_server_vpn_end_dhcp: 10.10.1.250
@@ -27,6 +28,8 @@ openvpn_server_tap_mode: true
 openvpn_server_tun_mode: false
 openvpn_server_inetrface_type_tap: tap0
 openvpn_server_inetrface_type_tun: tun
+openvpn_server_inetrface_type_bridge: br0
+openvpn_server_inetrface_name: ens160
 openvpn_server_network: 10.10.2.0
 openvpn_server_redirect_gateway: true
 openvpn_server_set_dns: true
