@@ -16,15 +16,28 @@ openvpn_revoke_these_certs: []
 #openvpn_server_wan_ip:
 
 openvpn_server_lan_ip: 10.10.1.254
+openvpn_server_netmask: 255.255.255.0
+openvpn_server_netmask_cidr: 24
+openvpn_server_vpn_start_dhcp: 10.10.1.200
+openvpn_server_vpn_end_dhcp: 10.10.1.250
+openvpn_server_custom_port: 9119
+openvpn_server_port: 1194
+openvpn_server_proto: udp
+openvpn_server_tap_mode: true
+openvpn_server_tun_mode: false
+openvpn_server_inetrface_type_tap: tap0
+openvpn_server_inetrface_type_tun: tun
+openvpn_server_network: 10.10.2.0
+openvpn_server_redirect_gateway: true
+openvpn_server_set_dns: true
+openvpn_server_custom_dns: true
+openvpn_server_dns_servers: [ '10.10.1.1' ]
+
 openvpn_server_service_name: "openvpn@server.service"
 openvpn_server_base_dir: /etc/openvpn
 openvpn_server_key_dir: /etc/openvpn/keys
-openvpn_server_custom_port: 9119
-openvpn_server_port: 1194
-openvpn_server_inetrface_type: tap0
 openvpn_server_resolv_retry: 5
 openvpn_server_dualstack: false
-openvpn_server_proto: udp
 openvpn_server_use_crl: true
 openvpn_server_tls_auth_required: false
 openvpn_server_auth_alg: SHA256
@@ -34,13 +47,6 @@ openvpn_server_use_hardened_tls: true
 openvpn_server_use_modern_tls: true
 openvpn_server_duplicate_cn: false
 openvpn_server_client_to_client: false
-openvpn_server_network: 10.10.2.0
-openvpn_server_netmask_cidr: 24
-openvpn_server_netmask: 255.255.255.0
-openvpn_server_redirect_gateway: true
-openvpn_server_set_dns: true
-openvpn_server_custom_dns: true
-openvpn_server_dns_servers: [ '10.10.1.1' ]
 openvpn_server_client_register_dns: true
 openvpn_server_push: []
 openvpn_server_keepalive_ping: 5
