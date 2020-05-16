@@ -52,8 +52,8 @@ ifconfig-pool-persist ipp.txt
 {% for srv in openvpn_server_dns_servers %} push "dhcp-option DNS {{ srv }}"
 {% endfor %}
 {% else %}
-push "dhcp-option DNS 10.10.1.1"
-push "dhcp-option WINS 10.10.1.1"
+push "dhcp-option DNS 8.8.8.8"
+push "dhcp-option DNS 8.8.4.4"
 {% endif %}
 {% endif %}
 

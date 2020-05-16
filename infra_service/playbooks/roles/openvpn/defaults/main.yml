@@ -38,8 +38,8 @@ openvpn_server_netmask_cidr: 24
 openvpn_server_netmask: 255.255.255.0
 openvpn_server_redirect_gateway: true
 openvpn_server_set_dns: true
-openvpn_server_custom_dns: false
-openvpn_server_dns_servers: []
+openvpn_server_custom_dns: true
+openvpn_server_dns_servers: [ '10.10.1.1' ]
 openvpn_server_client_register_dns: true
 openvpn_server_push: []
 openvpn_server_keepalive_ping: 5
