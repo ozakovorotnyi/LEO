@@ -6,10 +6,10 @@ port {{ openvpn_server_port }}
 
 {% if openvpn_server_tun_mode %}
 dev {{ openvpn_server_inetrface_type_tup }}
-{% elif openvpn_server_tap_mode %}
-dev {{ openvpn_server_inetrface_type_tap[3:] }}
-{% else %}
-dev is not specified
+{% endif %}
+
+{% if openvpn_server_tap_mode %}
+dev {{ openvpn_server_inetrface_type_tap }}
 {% endif %}
 
 ca {{ openvpn_server_key_dir }}/ca.crt
