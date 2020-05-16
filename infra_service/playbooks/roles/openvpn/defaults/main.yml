@@ -30,6 +30,7 @@ openvpn_server_inetrface_type_tap: tap0
 openvpn_server_inetrface_type_tun: tun
 openvpn_server_inetrface_type_bridge: br0
 openvpn_server_inetrface_name: ens160
+openvpn_server_inetrface_br_gw: '10.10.1.1'
 openvpn_server_network: 10.10.2.0
 openvpn_server_redirect_gateway: true
 openvpn_server_set_dns: true
