@@ -4,7 +4,7 @@ port {{ openvpn_server_port }}
 {% if openvpn_server_dualstack %} proto {{ openvpn_server_proto }}6 {% else %} proto {{ openvpn_server_proto }}
 {% endif %}
 dev {% if openvpn_server_tun_mode %} {{ openvpn_server_inetrface_type_tup }}
-{% elif openvpn_server_tap_mode  %} {{ openvpn_server_inetrface_type_tap }}
+{% elif openvpn_server_tap_mode %} {{ openvpn_server_inetrface_type_tap }}
 {% endif %}
 
 ca {{ openvpn_server_key_dir }}/ca.crt
