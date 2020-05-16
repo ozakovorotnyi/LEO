@@ -11,7 +11,7 @@ remote {{ openvpn_server_wan_ip | default(openvpn_server_lan_ip) }} {{ openvpn_s
 
 dev {% if openvpn_server_tun_mode %} {{ openvpn_server_inetrface_type_tup }}
 {% endif %}
-{% elif openvpn_server_tap_mode %} {{ openvpn_server_inetrface_type_tap[:3] }}
+{% elseif openvpn_server_tap_mode %} {{ openvpn_server_inetrface_type_tap[:3] }}
 {% endif %}
 
 resolv-retry {{ openvpn_server_resolv_retry }}
