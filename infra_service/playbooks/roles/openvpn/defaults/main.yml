@@ -15,7 +15,7 @@ openvpn_revoke_these_certs: []
 # Define this one by extra vars '-e'
 #openvpn_server_wan_ip:
 
-openvpn_server_lan_ip: 10.10.1.222
+openvpn_server_lan_ip: 10.10.1.254
 openvpn_server_service_name: "openvpn@server.service"
 openvpn_server_base_dir: /etc/openvpn
 openvpn_server_key_dir: /etc/openvpn/keys
