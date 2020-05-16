@@ -15,4 +15,8 @@ tap="{{ openvpn_server_inetrface_type_tap }}"
 
 for t in $tap; do
     /usr/sbin/openvpn --rmtun --dev $t
+    /usr/sbin/iptables -D INPUT -i $t -j ACCEPT
 done
+
+/usr/sbin/ifconfig $eth $eth_ip netmask $eth_netmask broadcast $eth_broadcast
+/usr/sbin/route add default gw $eth_gateway $eth
