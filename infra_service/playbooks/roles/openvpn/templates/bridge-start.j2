@@ -36,8 +36,8 @@ for t in $tap; do
     /usr/sbin/iptables -A INPUT -i $t -j ACCEPT
 done
 
-iptables -A INPUT -i $br -j ACCEPT
-iptables -A FORWARD -i $br -j ACCEPT
+/usr/sbin/iptables -A INPUT -i $br -j ACCEPT
+/usr/sbin/iptables -A FORWARD -i $br -j ACCEPT
 
 /usr/sbin/ifconfig $eth 0.0.0.0 promisc up
 
