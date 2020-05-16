@@ -83,7 +83,7 @@ persist-tun
 user {{ openvpn_server_service_user }}
 group {{ openvpn_server_service_group }}
 
-{% for option in openvpn_server_addl_server_options %} {{ option }}
+{% for option in openvpn_server_addl_server_options %} push {{ option }}
 {% endfor %}
 status status-{{ openvpn_server_config_file }}.log
 status-version {{ openvpn_server_status_version }}
