@@ -42,6 +42,7 @@
     jump: ACCEPT
     action: insert
     comment: "Allow VPN forwarding"
+  when: openvpn_server_tun_mode
   notify: "save firewall"
   tags:
     - openvpn
@@ -56,6 +57,7 @@
     jump: ACCEPT
     action: insert
     comment: "Allow incoming SSH connection"
+  when: openvpn_server_tun_mode
   notify: "save firewall"
   tags:
     - openvpn
@@ -70,6 +72,7 @@
     jump: ACCEPT
     action: insert
     comment: "Allow incoming VPN connection"
+  when: openvpn_server_tun_mode
   notify: "save firewall"
   tags:
     - openvpn
@@ -83,6 +86,7 @@
     jump: ACCEPT
     action: insert
     comment: "Accept packets from VPN tunnel adaptor"
+  when: openvpn_server_tun_mode
   notify: "save firewall"
   tags:
     - openvpn
@@ -98,7 +102,7 @@
     jump: SNAT
     action: insert
     comment: "Perform NAT readdressing"
-  when: not openvpn_server_masquerade_not_snat
+  when: not openvpn_server_masquerade_not_snat and openvpn_server_tun_mode
   notify: "save firewall"
   tags:
     - openvpn
@@ -113,7 +117,7 @@
     jump: MASQUERADE
     action: insert
     comment: "Perform NAT readdressing"
-  when: openvpn_server_masquerade_not_snat
+  when: openvpn_server_masquerade_not_snat and openvpn_server_tun_mode
   notify: "save firewall"
   tags:
     - openvpn
