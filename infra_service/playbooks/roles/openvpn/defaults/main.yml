@@ -36,7 +36,7 @@ openvpn_server_redirect_gateway: true
 openvpn_server_set_dns: true
 openvpn_server_custom_dns: true
 openvpn_server_dns_servers: [ '10.10.1.1' ]
-
+openvpn_server_default_gw_enabled: true
 openvpn_server_service_name: "openvpn@server.service"
 openvpn_server_base_dir: /etc/openvpn
 openvpn_server_key_dir: /etc/openvpn/keys
