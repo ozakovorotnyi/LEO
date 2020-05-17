@@ -1,1 +1,1 @@
-%{{ openvpn_server_service_group }} ALL=(ALL:ALL) NOPASSWD: {{ openvpn_server_sudoers_allow }}
+%{{ openvpn_server_service_group }} ALL=(ALL:ALL) NOPASSWD: /usr/sbin/iptables, /usr/sbin/brctl, /usr/sbin/ifconfig, /usr/sbin/route
