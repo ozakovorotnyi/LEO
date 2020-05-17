@@ -35,20 +35,6 @@
     - openvpn.server.install
     - openvpn.server.install.epel
 
-- name: Install base packages
-  yum:
-    state: present
-    name:
-      - git
-      - openssl
-      - net-tools
-      - bridge-utils
-  tags:
-    - openvpn
-    - openvpn.server
-    - openvpn.server.install
-    - openvpn.server.install.packages
-
 - name: Copy sudoers file to sudoers.d
   template:
     src: sudoers_openvpn.j2
@@ -59,15 +45,69 @@
     - openvpn.server.user.sudo
     - openvpn.server.install
 
-- name: Install OpenVPN server
+- name: Install OpenVPN server and dependencies
   yum:
-    name: openvpn
+    name:
+      - openvpn
+      - openssl
+      - net-tools
+      - bridge-utils
     state: latest
     enablerepo: epel
   tags:
     - openvpn
     - openvpn.server
     - openvpn.server.install
+
+- name: Create OpenVPN server config file
+  template:
+    src: server.conf.j2
+    dest: "{{ openvpn_server_base_dir }}/{{ openvpn_server_config_file }}.conf"
+    owner: "{{ openvpn_server_script_owner }}"
+    group: "{{ openvpn_server_script_group }}"
+  notify:
+    - restart openvpn
+  tags:
+    - openvpn
+    - openvpn.config
+    - openvpn.config.server
+    - openvpn.config.server.init
+
+- name: Create OpenVPN scripts TAP up
+  template:
+    src: bridge-start.j2
+    dest: "{{ openvpn_server_base_dir }}/server/bridge-start.sh"
+    owner: "{{ openvpn_server_service_user }}"
+    group: "{{ openvpn_server_service_group }}"
+    mode: 0755
+  when: openvpn_server_tap_mode and not openvpn_server_tun_mode
+  notify:
+    - restart openvpn
+  tags:
+    - openvpn
+    - openvpn.config
+    - openvpn.config.server
+    - openvpn.config.server.init
+    - openvpn.config.server.script.bridge
+    - openvpn.config.server.script.tap.up
+
+- name: Create OpenVPN scripts TAP down
+  template:
+    src: bridge-stop.j2
+    dest: "{{ openvpn_server_base_dir }}/server/bridge-stop.sh"
+    owner: "{{ openvpn_server_service_user }}"
+    group: "{{ openvpn_server_service_group }}"
+    mode: 0755
+  when: openvpn_server_tap_mode and not openvpn_server_tun_mode
+  notify:
+    - restart openvpn
+  tags:
+    - openvpn
+    - openvpn.config
+    - openvpn.config.server
+    - openvpn.config.server.init
+    - openvpn.config.server.script.bridge
+    - openvpn.config.server.script.tap.stop
 
 - name: Create OpenVPN key directory
   file:
@@ -78,6 +118,7 @@
     - openvpn.server
     - openvpn.server.dir.key
 
+################################ Certificates ################################
 - name: Copy openssl server/ca extensions
   copy:
     src: "{{ item }}"
@@ -290,56 +331,6 @@
     - openvpn
     - openvpn.crl
     - openvpn.crl.cron
-
-- name: Create OpenVPN server config file
-  template:
-    src: server.conf.j2
-    dest: "{{ openvpn_server_base_dir }}/{{ openvpn_server_config_file }}.conf"
-    owner: "{{ openvpn_server_script_owner }}"
-    group: "{{ openvpn_server_script_group }}"
-  notify:
-    - restart openvpn
-  tags:
-    - openvpn
-    - openvpn.config
-    - openvpn.config.server
-    - openvpn.config.server.init
-
-- name: Create OpenVPN scripts TAP up
-  template:
-    src: bridge-start.j2
-    dest: "{{ openvpn_server_base_dir }}/server/bridge-start.sh"
-    owner: "{{ openvpn_server_service_user }}"
-    group: "{{ openvpn_server_service_group }}"
-    mode: 0755
-  when: openvpn_server_tap_mode and not openvpn_server_tun_mode
-  notify:
-    - restart openvpn
-  tags:
-    - openvpn
-    - openvpn.config
-    - openvpn.config.server
-    - openvpn.config.server.init
-    - openvpn.config.server.script.bridge
-    - openvpn.config.server.script.tap.up
-
-- name: Create OpenVPN scripts TAP down
-  template:
-    src: bridge-stop.j2
-    dest: "{{ openvpn_server_base_dir }}/server/bridge-stop.sh"
-    owner: "{{ openvpn_server_service_user }}"
-    group: "{{ openvpn_server_service_group }}"
-    mode: 0755
-  when: openvpn_server_tap_mode and not openvpn_server_tun_mode
-  notify:
-    - restart openvpn
-  tags:
-    - openvpn
-    - openvpn.config
-    - openvpn.config.server
-    - openvpn.config.server.init
-    - openvpn.config.server.script.bridge
-    - openvpn.config.server.script.tap.stop
 
 #################################### Firewall settings ####################################
 - name: Firewall - Allow VPN forwarding
