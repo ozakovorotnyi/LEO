@@ -56,7 +56,7 @@ openvpn_server_push: []
 openvpn_server_keepalive_ping: 5
 openvpn_server_keepalive_timeout: 30
 openvpn_server_compression: lzo
-openvpn_server_service_user: nobody
+openvpn_server_service_user: openvpn
 openvpn_server_service_group: openvpn
 openvpn_server_addl_server_options: [
  'push "route 0.0.0.0 0.0.0.0 {{ openvpn_server_lan_ip }}"',

@@ -1,28 +1,6 @@
 ---
 # tasks file for playbooks/roles/openvpn
 
-- name: Ensure group 'nogroup' is present
-  group:
-    name: "{{ openvpn_server_service_group }}"
-    state: present
-    system: yes
-  tags:
-    - openvpn
-    - openvpn.server
-    - openvpn.server.nogroup
-
-- name: Enable ipv4 forwarding
-  sysctl:
-    name: net.ipv4.ip_forward
-    value: '1'
-    ignoreerrors: yes
-  when: openvpn_server_systemctl_ipv4_forvarding_enabled
-  tags:
-    - openvpn
-    - openvpn.server
-    - openvpn.server.enable_ipv4.forwarding
-
-#################################### Firewall settings ####################################
 - name: Install iptables-services
   yum:
     name: iptables-services
@@ -35,103 +13,16 @@
     - openvpn.server.install
     - openvpn.server.install.firewall
 
-- name: Firewall - Allow VPN forwarding
-  iptables:
-    chain: FORWARD
-    source: "{{ openvpn_server_network }}/{{ openvpn_server_netmask_cidr }}"
-    jump: ACCEPT
-    action: insert
-    comment: "Allow VPN forwarding"
-  when: openvpn_server_tun_mode
-  notify: "save firewall"
+- name: Enable ipv4 forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    ignoreerrors: yes
+  when: openvpn_server_systemctl_ipv4_forvarding_enabled and openvpn_server_tun_mode
   tags:
     - openvpn
-    - openvpn.firewall
-    - openvpn.firewall.fw
-
-- name: Firewall - Allow incoming SSH connection
-  iptables:
-    chain: INPUT
-    protocol: tcp
-    destination_port: "{{ ansible_port | default(22) }}"
-    jump: ACCEPT
-    action: insert
-    comment: "Allow incoming SSH connection"
-  when: openvpn_server_tun_mode
-  notify: "save firewall"
-  tags:
-    - openvpn
-    - openvpn.firewall
-    - openvpn.firewall.fw
-
-- name: Firewall - Allow incoming VPN connection
-  iptables:
-    chain: INPUT
-    protocol: "{{ openvpn_server_proto }}"
-    destination_port: "{{ openvpn_server_port | int }}"
-    jump: ACCEPT
-    action: insert
-    comment: "Allow incoming VPN connection"
-  when: openvpn_server_tun_mode
-  notify: "save firewall"
-  tags:
-    - openvpn
-    - openvpn.firewall
-    - openvpn.firewall.fw
-
-- name: Firewall - Accept packets from VPN tunnel adaptor
-  iptables:
-    chain: INPUT
-    in_interface: tun0
-    jump: ACCEPT
-    action: insert
-    comment: "Accept packets from VPN tunnel adaptor"
-  when: openvpn_server_tun_mode
-  notify: "save firewall"
-  tags:
-    - openvpn
-    - openvpn.firewall
-    - openvpn.firewall.fw
-
-- name: Firewall - Perform NAT readdressing
-  iptables:
-    table: nat
-    chain: POSTROUTING
-    source: "{{ openvpn_server_network }}/{{ openvpn_server_netmask_cidr }}"
-    to_source: "{{ ansible_default_ipv4.address | default(openvpn_server_lan_ip) }}"
-    jump: SNAT
-    action: insert
-    comment: "Perform NAT readdressing"
-  when: not openvpn_server_masquerade_not_snat and openvpn_server_tun_mode
-  notify: "save firewall"
-  tags:
-    - openvpn
-    - openvpn.firewall
-    - openvpn.firewall.fw
-
-- name: Firewall - Perform NAT readdressing with MASQUERADE
-  iptables:
-    table: nat
-    chain: POSTROUTING
-    source: "{{ openvpn_server_network }}/{{ openvpn_server_netmask_cidr }}"
-    jump: MASQUERADE
-    action: insert
-    comment: "Perform NAT readdressing"
-  when: openvpn_server_masquerade_not_snat and openvpn_server_tun_mode
-  notify: "save firewall"
-  tags:
-    - openvpn
-    - openvpn.firewall
-    - openvpn.firewall.fw
-
-- name: Save existing Firewall rule before start iptables service
-  shell: "{{ iptables_save_command }}"
-  when: iptables_installed.changed|bool
-  tags:
-    - openvpn
-    - openvpn.firewall
-    - openvpn.firewall.fw
-#########################################################################################
+    - openvpn.server
+    - openvpn.server.enable_ipv4.forwarding
 
 - name: Install epel-release
   yum:
@@ -149,11 +40,7 @@
     state: present
     name:
       - git
-      - vim
       - openssl
-      - telnet
-      - wget
-      - unzip
       - net-tools
       - bridge-utils
   tags:
@@ -387,7 +274,7 @@
 - name: Add cron to check every Saturday if the CRL needs to be renewed
   cron:
     name: "Check if CRL will expire soon"
-    special_time: weekly
+    special_time: daily
     job: "sh {{ openvpn_server_key_dir }}/crl-cron.sh"
   tags:
     - openvpn
@@ -444,8 +331,105 @@
     - openvpn.config.server.script.bridge
     - openvpn.config.server.script.tap.stop
 
-########## Client certificates ##############
+#################################### Firewall settings ####################################
+- name: Firewall - Allow VPN forwarding
+  iptables:
+    chain: FORWARD
+    source: "{{ openvpn_server_network }}/{{ openvpn_server_netmask_cidr }}"
+    jump: ACCEPT
+    action: insert
+    comment: "Allow VPN forwarding"
+  when: openvpn_server_tun_mode
+  notify: "save firewall"
+  tags:
+    - openvpn
+    - openvpn.firewall
+    - openvpn.firewall.fw
 
+- name: Firewall - Allow incoming SSH connection
+  iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: "{{ ansible_port | default(22) }}"
+    jump: ACCEPT
+    action: insert
+    comment: "Allow incoming SSH connection"
+  when: openvpn_server_tun_mode
+  notify: "save firewall"
+  tags:
+    - openvpn
+    - openvpn.firewall
+    - openvpn.firewall.fw
+
+- name: Firewall - Allow incoming VPN connection
+  iptables:
+    chain: INPUT
+    protocol: "{{ openvpn_server_proto }}"
+    destination_port: "{{ openvpn_server_port | int }}"
+    jump: ACCEPT
+    action: insert
+    comment: "Allow incoming VPN connection"
+  when: openvpn_server_tun_mode
+  notify: "save firewall"
+  tags:
+    - openvpn
+    - openvpn.firewall
+    - openvpn.firewall.fw
+
+- name: Firewall - Accept packets from VPN tunnel adaptor
+  iptables:
+    chain: INPUT
+    in_interface: tun0
+    jump: ACCEPT
+    action: insert
+    comment: "Accept packets from VPN tunnel adaptor"
+  when: openvpn_server_tun_mode
+  notify: "save firewall"
+  tags:
+    - openvpn
+    - openvpn.firewall
+    - openvpn.firewall.fw
+
+- name: Firewall - Perform NAT readdressing
+  iptables:
+    table: nat
+    chain: POSTROUTING
+    source: "{{ openvpn_server_network }}/{{ openvpn_server_netmask_cidr }}"
+    to_source: "{{ ansible_default_ipv4.address | default(openvpn_server_lan_ip) }}"
+    jump: SNAT
+    action: insert
+    comment: "Perform NAT readdressing"
+  when: not openvpn_server_masquerade_not_snat and openvpn_server_tun_mode
+  notify: "save firewall"
+  tags:
+    - openvpn
+    - openvpn.firewall
+    - openvpn.firewall.fw
+
+- name: Firewall - Perform NAT readdressing with MASQUERADE
+  iptables:
+    table: nat
+    chain: POSTROUTING
+    source: "{{ openvpn_server_network }}/{{ openvpn_server_netmask_cidr }}"
+    jump: MASQUERADE
+    action: insert
+    comment: "Perform NAT readdressing"
+  when: openvpn_server_masquerade_not_snat and openvpn_server_tun_mode
+  notify: "save firewall"
+  tags:
+    - openvpn
+    - openvpn.firewall
+    - openvpn.firewall.fw
+
+- name: Save existing Firewall rule before start iptables service
+  shell: "{{ iptables_save_command }}"
+  when: iptables_installed.changed|bool
+  tags:
+    - openvpn
+    - openvpn.firewall
+    - openvpn.firewall.fw
+
+########## Client certificates ##############
 - name: Copy openssl client extensions
   copy:
     src: openssl-client.ext
@@ -586,4 +570,3 @@
     - openvpn
     - openvpn.revoke.client
     - openvpn.revoke.client.csr
-#########################################################
