@@ -1,5 +1,5 @@
 ---
-- hosts: 91.218.253.23
+- hosts: "{{ esxi_remote_host }}"
   gather_facts: no
   vars:
     vcenter_server: "10.1.1.100"
