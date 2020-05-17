@@ -24,22 +24,22 @@ for t in $tap; do
     /usr/sbin/openvpn --mktun --dev $t
 done
 
-/usr/sbin/brctl addbr $br
-/usr/sbin/brctl addif $br $eth
+sudo /usr/sbin/brctl addbr $br
+sudo  /usr/sbin/brctl addif $br $eth
 
 for t in $tap; do
-    /usr/sbin/brctl addif $br $t
+    sudo /usr/sbin/brctl addif $br $t
 done
 
 for t in $tap; do
-    /usr/sbin/ifconfig $t 0.0.0.0 promisc up
-    /usr/sbin/iptables -A INPUT -i $t -j ACCEPT
+    sudo /usr/sbin/ifconfig $t 0.0.0.0 promisc up
+    sudo /usr/sbin/iptables -A INPUT -i $t -j ACCEPT
 done
 
-/usr/sbin/iptables -A INPUT -i $br -j ACCEPT
-/usr/sbin/iptables -A FORWARD -i $br -j ACCEPT
+sudo /usr/sbin/iptables -A INPUT -i $br -j ACCEPT
+sudo /usr/sbin/iptables -A FORWARD -i $br -j ACCEPT
 
-/usr/sbin/ifconfig $eth 0.0.0.0 promisc up
+sudo /usr/sbin/ifconfig $eth 0.0.0.0 promisc up
 
-/usr/sbin/ifconfig $br $eth_ip netmask $eth_netmask broadcast $eth_broadcast
-/usr/sbin/route add default gw $eth_gateway $br
+sudo /usr/sbin/ifconfig $br $eth_ip netmask $eth_netmask broadcast $eth_broadcast
+sudo /usr/sbin/route add default gw $eth_gateway $br

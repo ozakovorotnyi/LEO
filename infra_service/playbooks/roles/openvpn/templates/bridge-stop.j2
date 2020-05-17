@@ -18,13 +18,13 @@ eth_netmask="{{ openvpn_server_netmask }}"
 eth_gateway="{{ openvpn_server_interface_br_gw }}"
 eth_broadcast="{{ openvpn_server_net_broadcast }}"
 
-/usr/sbin/ifconfig $br down
-/usr/sbin/brctl delbr $br
+sudo /usr/sbin/ifconfig $br down
+sudo /usr/sbin/brctl delbr $br
 
 for t in $tap; do
-    /usr/sbin/openvpn --rmtun --dev $t
-    /usr/sbin/iptables -D INPUT -i $t -j ACCEPT
+    sudo /usr/sbin/openvpn --rmtun --dev $t
+    sudo /usr/sbin/iptables -D INPUT -i $t -j ACCEPT
 done
 
-/usr/sbin/ifconfig $eth $eth_ip netmask $eth_netmask broadcast $eth_broadcast
-/usr/sbin/route add default gw $eth_gateway $eth
+sudo /usr/sbin/ifconfig $eth $eth_ip netmask $eth_netmask broadcast $eth_broadcast
+sudo /usr/sbin/route add default gw $eth_gateway $eth
