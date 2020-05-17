@@ -430,9 +430,9 @@
   template:
     src: bridge-stop.j2
     dest: "{{ openvpn_server_base_dir }}/server/bridge-stop.sh"
-    owner: "{{ openvpn_server_script_owner }}"
-    group: "{{ openvpn_server_script_group }}"
-    mode: 755
+    owner: "{{ openvpn_server_service_user }}"
+    group: "{{ openvpn_server_service_group }}"
+    mode: 0755
   when: openvpn_server_tap_mode and not openvpn_server_tun_mode
   notify:
     - restart openvpn
