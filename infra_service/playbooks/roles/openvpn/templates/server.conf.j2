@@ -85,7 +85,7 @@ group {{ openvpn_server_service_group }}
 
 {% for option in openvpn_server_addl_server_options %} {{ option }}
 {% endfor %}
-status status-{{ openvpn_server_config_file }}.log
+status status-server.log
 status-version {{ openvpn_server_status_version }}
 log-append {{ openvpn_server_log_dir }}/{{ openvpn_server_log_file }}
 verb 3
