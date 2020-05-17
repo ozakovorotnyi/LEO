@@ -18,7 +18,7 @@
     name: net.ipv4.ip_forward
     value: '1'
     ignoreerrors: yes
-  when: openvpn_server_systemctl_ipv4_forvarding_enabled and openvpn_server_tun_mode
+  when: openvpn_server_systemctl_ipv4_forvarding_enabled
   tags:
     - openvpn
     - openvpn.server
