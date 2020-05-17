@@ -58,15 +58,10 @@ openvpn_server_keepalive_timeout: 30
 openvpn_server_compression: lzo
 openvpn_server_service_user: openvpn
 openvpn_server_service_group: openvpn
-openvpn_server_addl_server_options: [
- 'push "route 0.0.0.0 0.0.0.0 {{ openvpn_server_lan_ip }}"',
- 'push "route 10.10.1.0 255.255.255.0 {{ openvpn_server_lan_ip }}"',
- 'script-security 2',
- 'up "/etc/openvpn/server/bridge-start.sh"',
- 'down "/etc/openvpn/server/bridge-stop.sh"' ]
 openvpn_server_addl_client_options: []
 openvpn_server_status_version: 1
-openvpn_server_config_file: "server"
+openvpn_server_config_dir: "{{ openvpn_server_base_dir }}/server"
+openvpn_server_config_file: "server.conf"
 openvpn_server_log_dir: /var/log
 openvpn_server_log_file: openvpn.log
 openvpn_server_verify_cn: false
@@ -80,6 +75,12 @@ openvpn_server_ca_key.crt: {}
 openvpn_server_script_owner: root
 openvpn_server_script_group: root
 openvpn_server_masquerade_not_snat: false
+openvpn_server_addl_server_options: [
+ 'push "route 0.0.0.0 0.0.0.0 {{ openvpn_server_lan_ip }}"',
+ 'push "route 10.10.1.0 255.255.255.0 {{ openvpn_server_lan_ip }}"',
+ 'script-security 2',
+ 'up "/etc/openvpn/server/bridge-start.sh"',
+ 'down "/etc/openvpn/server/bridge-stop.sh"' ]
 
 openvpn_server_systemctl_ipv4_forvarding_enabled: true
 

@@ -62,7 +62,7 @@
 - name: Create OpenVPN server config file
   template:
     src: server.conf.j2
-    dest: "{{ openvpn_server_base_dir }}/{{ openvpn_server_config_file }}.conf"
+    dest: "{{ openvpn_server_base_dir }}/{{ openvpn_server_config_file }}"
     owner: "{{ openvpn_server_script_owner }}"
     group: "{{ openvpn_server_script_group }}"
   notify:
@@ -76,7 +76,7 @@
 - name: Create OpenVPN scripts TAP up
   template:
     src: bridge-start.j2
-    dest: "{{ openvpn_server_base_dir }}/server/bridge-start.sh"
+    dest: "{{ openvpn_server_config_dir }}/bridge-start.sh"
     owner: "{{ openvpn_server_service_user }}"
     group: "{{ openvpn_server_service_group }}"
     mode: 0755
@@ -94,7 +94,7 @@
 - name: Create OpenVPN scripts TAP down
   template:
     src: bridge-stop.j2
-    dest: "{{ openvpn_server_base_dir }}/server/bridge-stop.sh"
+    dest: "{{ openvpn_server_config_dir }}/bridge-stop.sh"
     owner: "{{ openvpn_server_service_user }}"
     group: "{{ openvpn_server_service_group }}"
     mode: 0755
