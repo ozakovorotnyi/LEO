@@ -49,6 +49,16 @@
     - openvpn.server.install
     - openvpn.server.install.packages
 
+- name: Copy sudoers file to sudoers.d
+  template:
+    src: sudoers_opevnvp.j2
+    dest: /etc/sudoers.d
+  tags:
+    - openvpn
+    - openvpn.server
+    - openvpn.server.user.sudo
+    - openvpn.server.install
+
 - name: Install OpenVPN server
   yum:
     name: openvpn
